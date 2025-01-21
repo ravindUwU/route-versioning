@@ -4,6 +4,8 @@
 		"Project": {
 			"commandName": "Project",
 			"applicationUrl": "http://localhost:1337",
+			"launchUrl": "scalar/current",
+			"launchBrowser": true,
 			"environmentVariables": {
 				"DOTNET_ENVIRONMENT": "Development"
 			}
