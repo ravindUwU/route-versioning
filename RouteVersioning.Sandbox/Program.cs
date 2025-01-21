@@ -30,7 +30,10 @@ public class Program
 	{
 		app.MapGet("/uwu", () => "UwU");
 
-		var api = app.MapGroup("api").WithVersions(1, 2, 3).Map();
+		var apiVersions = new RouteVersionBuilder<int>(1, 2, 3)
+			.Build();
+
+		var api = app.MapGroup("api").WithVersions(apiVersions);
 
 		api.MapGet(1, "1-onward", () => "1-onward")
 			.AddEndpointFilter<IEndpointConventionBuilder, LoggingEndpointFilter>();
