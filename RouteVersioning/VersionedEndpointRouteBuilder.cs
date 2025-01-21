@@ -7,73 +7,64 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-
-public class VersionedEndpointRouteBuilder<T>
+public class VersionedEndpointRouteBuilder<T>(
+	IEndpointRouteBuilder routeBuilder,
+	RouteVersions<T> versions
+)
 	where T : struct, IComparable
 {
-	private readonly IEndpointRouteBuilder routeBuilder;
-	private readonly RouteVersions<T> versions;
-
-	public VersionedEndpointRouteBuilder(
-		IEndpointRouteBuilder routeBuilder,
-		RouteVersions<T> versions
-	)
-	{
-		this.routeBuilder = routeBuilder;
-		this.versions = versions;
-	}
 
 	// GET
 
-	public void MapGet(T from, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapGet(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Get], handler);
 
-	public void MapGet((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapGet((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Get], handler);
 
 	// POST
 
-	public void MapPost(T from, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapPost(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Post], handler);
 
-	public void MapPost((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapPost((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Post], handler);
 
 	// PUT
 
-	public void MapPut(T from, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapPut(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Put], handler);
 
-	public void MapPut((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapPut((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Put], handler);
 
 	// DELETE
 
-	public void MapDelete(T from, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapDelete(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Delete], handler);
 
-	public void MapDelete((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapDelete((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Delete], handler);
 
 	// PATCH
 
-	public void MapPatch(T from, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapPatch(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Patch], handler);
 
-	public void MapPatch((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapPatch((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Patch], handler);
 
 	// Methods
 
-	public void MapMethods(T from, IEnumerable<string> methods, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapMethods(T from, IEnumerable<string> methods, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, methods, handler);
 
-	public void MapMethods((T From, T To) range, IEnumerable<string> methods, [StringSyntax("Route")] string pattern, Delegate handler)
+	public IEndpointConventionBuilder MapMethods((T From, T To) range, IEnumerable<string> methods, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, methods, handler);
 
 	// Implementation
 
-	private void Map(
+	private IEndpointConventionBuilder Map(
 		T from,
 		T? to,
 		[StringSyntax("Route")] string pattern,
@@ -81,6 +72,8 @@ public class VersionedEndpointRouteBuilder<T>
 		Delegate handler
 	)
 	{
+		var endpointBuilders = new List<IEndpointConventionBuilder>();
+
 		foreach (var version in versions.Set)
 		{
 			var shouldMap =
@@ -90,7 +83,30 @@ public class VersionedEndpointRouteBuilder<T>
 			if (shouldMap)
 			{
 				var vPattern = $"{versions.Prefix(version)}/{pattern.TrimStart('/')}";
-				routeBuilder.MapMethods(vPattern, methods, handler);
+				var handlerBuilder = routeBuilder.MapMethods(vPattern, methods, handler);
+				endpointBuilders.Add(handlerBuilder);
+			}
+		}
+
+		return new EndpointConventionBuilder(endpointBuilders);
+	}
+
+	private class EndpointConventionBuilder(IEnumerable<IEndpointConventionBuilder> builders)
+		: IEndpointConventionBuilder
+	{
+		public void Add(Action<EndpointBuilder> convention)
+		{
+			foreach (var builder in builders)
+			{
+				builder.Add(convention);
+			}
+		}
+
+		public void Finally(Action<EndpointBuilder> convention)
+		{
+			foreach (var builder in builders)
+			{
+				builder.Finally(convention);
 			}
 		}
 	}
