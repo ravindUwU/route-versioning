@@ -31,6 +31,7 @@ public class Program
 		app.MapGet("/uwu", () => "UwU");
 
 		var apiVersions = new RouteVersionBuilder<int>(1, 2, 3)
+			.WithPrefix("versions/{0}")
 			.Build();
 
 		var api = app.MapGroup("api").WithVersions(apiVersions);

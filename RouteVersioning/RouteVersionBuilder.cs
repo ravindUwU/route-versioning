@@ -21,6 +21,29 @@ public class RouteVersionBuilder<T>
 		return this;
 	}
 
+	public RouteVersionBuilder<T> WithPrefix(string pattern)
+	{
+		var firstIdx = pattern.IndexOf("{0}");
+		if (firstIdx is -1)
+		{
+			throw new ArgumentException(
+				message: @"The specified pattern must include the version placeholder ""{0}"".",
+				paramName: nameof(pattern)
+			);
+		}
+
+		if (firstIdx != pattern.LastIndexOf("{0}"))
+		{
+			throw new ArgumentException(
+				message: @"The specified pattern must include a single version placeholder ""{0}"".",
+				paramName: nameof(pattern)
+			);
+		}
+
+		prefix = (v) => String.Format(pattern, v);
+		return this;
+	}
+
 	public RouteVersions<T> Build()
 	{
 		return new RouteVersions<T>(versions, prefix);
