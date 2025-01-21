@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution Folder", "{CACF25CB-8194-4B26-A05B-970D3ACBCF80}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteVersioning", "RouteVersioning\RouteVersioning.csproj", "{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteVersioning.Sandbox", "RouteVersioning.Sandbox\RouteVersioning.Sandbox.csproj", "{45FEA637-4370-4E24-BCC7-7F33D80CC408}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
