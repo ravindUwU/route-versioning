@@ -12,15 +12,15 @@ public class VersionedEndpointRouteBuilder<T>
 	where T : struct, IComparable
 {
 	private readonly IEndpointRouteBuilder routeBuilder;
-	private readonly RouteVersionBuilder<T> versionBuilder;
+	private readonly RouteVersions<T> versions;
 
 	public VersionedEndpointRouteBuilder(
 		IEndpointRouteBuilder routeBuilder,
-		RouteVersionBuilder<T> versionBuilder
+		RouteVersions<T> versions
 	)
 	{
 		this.routeBuilder = routeBuilder;
-		this.versionBuilder = versionBuilder;
+		this.versions = versions;
 	}
 
 	// GET
@@ -81,7 +81,7 @@ public class VersionedEndpointRouteBuilder<T>
 		Delegate handler
 	)
 	{
-		foreach (var version in versionBuilder.Versions)
+		foreach (var version in versions.Set)
 		{
 			var shouldMap =
 				version.CompareTo(from) >= 0

@@ -27,7 +27,7 @@ public class Program
 	{
 		app.MapGet("/uwu", () => "UwU");
 
-		var api = app.MapGroup("api").WithVersions(1, 2, 3);
+		var api = app.MapGroup("api").WithVersions(1, 2, 3).Map();
 
 		api.MapGet(1, "1-onward", () => "1-onward");
 		api.MapGet(2, "2-onward", () => "2-onward");

@@ -3,13 +3,21 @@ namespace RouteVersioning;
 using System;
 using System.Collections.Generic;
 
-public class RouteVersionBuilder<T>
+public class RouteVersionBuilder<T, TContext>
 	where T : struct, IComparable
 {
-	public RouteVersionBuilder(IReadOnlySet<T> versions)
+	private ISet<T> versions;
+
+	public RouteVersionBuilder(ISet<T> versions, TContext context)
 	{
-		Versions = versions;
+		this.versions = versions;
+		Context = context;
 	}
 
-	public IReadOnlySet<T> Versions { get; }
+	public TContext Context { get; }
+
+	public RouteVersions<T> Build()
+	{
+		return new RouteVersions<T>(versions);
+	}
 }
