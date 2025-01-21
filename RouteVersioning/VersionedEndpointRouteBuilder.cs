@@ -72,6 +72,24 @@ public class VersionedEndpointRouteBuilder<T>(
 		Delegate handler
 	)
 	{
+		if (!versions.Set.Contains(from))
+		{
+			throw new ArgumentOutOfRangeException(
+				message: $@"Invalid ""from"" version specified while mapping `{String.Join(",", methods)} {pattern}`.",
+				paramName: nameof(from),
+				actualValue: from
+			);
+		}
+
+		if (to is not null && !versions.Set.Contains(to.Value))
+		{
+			throw new ArgumentOutOfRangeException(
+				message: $@"Invalid ""to"" version specified while mapping `{String.Join(",", methods)} {pattern}`.",
+				paramName: nameof(to),
+				actualValue: to
+			);
+		}
+
 		var endpointBuilders = new List<IEndpointConventionBuilder>();
 
 		foreach (var version in versions.Set)
