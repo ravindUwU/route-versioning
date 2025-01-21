@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RouteVersioning.OpenApi;
 using Scalar.AspNetCore;
 using System.Threading.Tasks;
 
@@ -20,19 +21,20 @@ public class Program
 		app.Run();
 	}
 
+	private static readonly RouteVersions<int> apiVersions = new RouteVersionBuilder<int>(1, 2, 3)
+		.Build();
+
 	private static void ConfigureServices(WebApplicationBuilder app)
 	{
 		var services = app.Services;
+
 		services.AddOpenApi("current");
+		services.AddVersionedOpenApi(apiVersions);
 	}
 
 	private static void ConfigureApp(WebApplication app)
 	{
 		app.MapGet("/uwu", () => "UwU");
-
-		var apiVersions = new RouteVersionBuilder<int>(1, 2, 3)
-			.WithPrefix("versions/{0}")
-			.Build();
 
 		var api = app.MapGroup("api").WithVersions(apiVersions);
 
@@ -46,13 +48,13 @@ public class Program
 		api.MapGet((2, 3), "2-to-3", () => "2-to-3");
 
 		// /openapi/current.json
+		// /openapi/v[1-3].json
 		app.MapOpenApi();
 
 		// /scalar/current
 		app.MapScalarApiReference((options) => options
 			.WithDefaultOpenAllTags(true)
 			.WithDefaultFonts(false)
-			.WithModels(false)
 			.WithDefaultHttpClient(ScalarTarget.Http, ScalarClient.Http11)
 		);
 	}

@@ -94,6 +94,12 @@ public class VersionedEndpointRouteBuilder<T>(
 
 		foreach (var version in versions.Set)
 		{
+			var meta = new RouteVersionEndpointMetadata
+			{
+				Version = version,
+				VersionComparer = EqualityComparer<T>.Default,
+			};
+
 			var shouldMap =
 				version.CompareTo(from) >= 0
 				&& (to is null || version.CompareTo(to) <= 0);
@@ -101,7 +107,10 @@ public class VersionedEndpointRouteBuilder<T>(
 			if (shouldMap)
 			{
 				var vPattern = $"{versions.Prefix(version)}/{pattern.TrimStart('/')}";
-				var handlerBuilder = routeBuilder.MapMethods(vPattern, methods, handler);
+
+				var handlerBuilder = routeBuilder.MapMethods(vPattern, methods, handler)
+					.WithMetadata(meta);
+
 				endpointBuilders.Add(handlerBuilder);
 			}
 		}
