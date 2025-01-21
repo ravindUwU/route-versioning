@@ -16,8 +16,16 @@ public class RouteVersionBuilder<T, TContext>
 
 	public TContext Context { get; }
 
+	private Func<T, string> prefix = (v) => $"v{v}";
+
+	public RouteVersionBuilder<T, TContext> WithPrefix(Func<T, string> prefix)
+	{
+		this.prefix = prefix;
+		return this;
+	}
+
 	public RouteVersions<T> Build()
 	{
-		return new RouteVersions<T>(versions);
+		return new RouteVersions<T>(versions, prefix);
 	}
 }

@@ -89,7 +89,7 @@ public class VersionedEndpointRouteBuilder<T>
 
 			if (shouldMap)
 			{
-				var vPattern = $"v{version}/{pattern.TrimStart('/')}";
+				var vPattern = $"{versions.Prefix(version)}/{pattern.TrimStart('/')}";
 				routeBuilder.MapMethods(vPattern, methods, handler);
 			}
 		}
