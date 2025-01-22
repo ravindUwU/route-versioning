@@ -9,7 +9,8 @@ public static class Extensions
 {
 	public static IServiceCollection AddVersionedOpenApi<T>(
 		this IServiceCollection services,
-		RouteVersions<T> versions
+		RouteVersions<T> versions,
+		bool includeUnversionedEndpoints = true
 	)
 		where T : struct
 	{
@@ -20,7 +21,10 @@ public static class Extensions
 			services.AddOpenApi(versions.GetSlug(version), (options) =>
 			{
 				options.AddDocumentTransformer(new DocumentInfoTransformer<T>(versions, version));
-				options.AddDocumentTransformer(new ExcludeInapplicableOperationsTransformer<T>(version));
+				options.AddDocumentTransformer(new ExcludeInapplicableOperationsTransformer<T>(
+					version,
+					includeUnversionedEndpoints
+				));
 
 				foreach (var configure in meta.GetFeatures<ConfigureOpenApiOptionsDelegate>())
 				{

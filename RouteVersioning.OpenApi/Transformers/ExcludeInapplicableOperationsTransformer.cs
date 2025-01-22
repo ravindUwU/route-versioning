@@ -7,7 +7,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-internal class ExcludeInapplicableOperationsTransformer<T>(T version)
+internal class ExcludeInapplicableOperationsTransformer<T>(
+	T version,
+	bool includeUnversionedEndpoints
+)
 	: IOpenApiDocumentTransformer
 	where T : struct
 {
@@ -21,13 +24,17 @@ internal class ExcludeInapplicableOperationsTransformer<T>(T version)
 			var opKeysToRemove = new List<OperationType>();
 			foreach (var (opKey, op) in path.Operations)
 			{
-				if (
-					docActions.TryGetAction(op, out var action)
-					&& action.EndpointMetadata.OfType<IRouteVersionMetadata>().SingleOrDefault() is { } meta
-					&& !meta.IsVersion(version)
-				)
+				if (docActions.TryGetAction(op, out var action))
 				{
-					opKeysToRemove.Add(opKey);
+					var meta = action.EndpointMetadata.OfType<IRouteVersionMetadata>().SingleOrDefault();
+
+					if (
+						(meta is null && !includeUnversionedEndpoints)
+						|| (meta is not null && !meta.IsVersion(version))
+					)
+					{
+						opKeysToRemove.Add(opKey);
+					}
 				}
 			}
 
