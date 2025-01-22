@@ -107,6 +107,11 @@ public class VersionedEndpointRouteBuilder<T>(
 				var handlerBuilder = routeBuilder.MapMethods(vPattern, methods, handler)
 					.WithMetadata(meta);
 
+				foreach (var configure in meta.GetFeatures<Extensions.ConfigureEndpointConventionsDelegate>())
+				{
+					configure(handlerBuilder);
+				}
+
 				endpointBuilders.Add(handlerBuilder);
 			}
 		}

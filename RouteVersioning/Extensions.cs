@@ -1,5 +1,6 @@
 namespace RouteVersioning;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using System;
 
@@ -13,4 +14,15 @@ public static class Extensions
 	{
 		return new VersionedEndpointRouteBuilder<T>(routeBuilder, versions);
 	}
+
+	public static RouteVersionMetadataBuilder<T> ConfigureEndpoints<T>(
+		this RouteVersionMetadataBuilder<T> builder,
+		ConfigureEndpointConventionsDelegate configure
+	)
+		where T : struct, IComparable
+	{
+		return builder.WithFeature(configure);
+	}
+
+	public delegate void ConfigureEndpointConventionsDelegate(IEndpointConventionBuilder builder);
 }

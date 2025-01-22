@@ -2,6 +2,7 @@ namespace RouteVersioning.Sandbox;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,9 @@ public class Program
 
 	private static readonly RouteVersions<int> apiVersions = new RouteVersionBuilder<int>()
 		.WithVersion(1, (v) => v
+			.ConfigureEndpoints((e) => e
+				.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
+			)
 			.ConfigureOpenApiInfo((i) =>
 			{
 				i.Description = "v1 Description!!!";
@@ -53,7 +57,7 @@ public class Program
 		var api = app.MapGroup("api").WithVersions(apiVersions);
 
 		api.MapGet(1, "1-onward", () => "1-onward")
-			.AddEndpointFilter<IEndpointConventionBuilder, LoggingEndpointFilter>();
+			.AddEndpointFilter<IEndpointConventionBuilder, Filter1OnwardEndpoint>();
 
 		api.MapGet(2, "2-onward", () => "2-onward");
 		api.MapGet(3, "3-onward", () => "3-onward");
@@ -73,14 +77,30 @@ public class Program
 		);
 	}
 
-	private class LoggingEndpointFilter(
-		ILogger<LoggingEndpointFilter> logger
-	) : IEndpointFilter
+	private class Filter1OnwardEndpoint(ILogger<Filter1OnwardEndpoint> logger) : IEndpointFilter
 	{
 		public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext ctx, EndpointFilterDelegate next)
 		{
 			var req = ctx.HttpContext.Request;
-			var label = $"{req.Method} {req.Path}";
+			var label = $"{req.Method} {req.GetEncodedPathAndQuery()}";
+			try
+			{
+				logger.LogInformation("Started: {label}", label);
+				return await next(ctx);
+			}
+			finally
+			{
+				logger.LogInformation("Finished: {label}", label);
+			}
+		}
+	}
+
+	private class FilterV1Endpoints(ILogger<FilterV1Endpoints> logger) : IEndpointFilter
+	{
+		public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext ctx, EndpointFilterDelegate next)
+		{
+			var req = ctx.HttpContext.Request;
+			var label = $"{req.Method} {req.GetEncodedPathAndQuery()}";
 			try
 			{
 				logger.LogInformation("Started: {label}", label);
