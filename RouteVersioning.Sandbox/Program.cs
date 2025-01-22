@@ -52,7 +52,7 @@ public class Program
 
 	private static void ConfigureApp(WebApplication app)
 	{
-		app.MapGet("/uwu", () => "UwU");
+		app.MapGet("uwu", () => "UwU");
 
 		var api = app.MapGroup("api").WithVersions(apiVersions);
 
@@ -65,11 +65,11 @@ public class Program
 		api.MapGet((1, 2), "1-to-2", () => "1-to-2");
 		api.MapGet((2, 3), "2-to-3", () => "2-to-3");
 
-		// /openapi/current.json
-		// /openapi/v[1-3].json
+		// openapi/current.json
+		// openapi/v[1-3].json
 		app.MapOpenApi();
 
-		// /scalar/current
+		// scalar/current
 		app.MapScalarApiReference((options) => options
 			.WithDefaultOpenAllTags(true)
 			.WithDefaultFonts(false)

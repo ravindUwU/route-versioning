@@ -8,7 +8,7 @@ public class RouteVersionBuilder<T>
 	where T : struct, IComparable
 {
 	private readonly Dictionary<T, RouteVersionMetadataBuilder<T>> versions = [];
-	private Func<T, string> prefix = (v) => $"v{v}";
+	private Func<T, string> slug = (v) => $"v{v}";
 
 	public RouteVersionBuilder<T> WithVersion(
 		T version,
@@ -26,13 +26,13 @@ public class RouteVersionBuilder<T>
 		return this;
 	}
 
-	public RouteVersionBuilder<T> WithPrefix(Func<T, string> prefix)
+	public RouteVersionBuilder<T> WithSlug(Func<T, string> slug)
 	{
-		this.prefix = prefix;
+		this.slug = slug;
 		return this;
 	}
 
-	public RouteVersionBuilder<T> WithPrefix(string pattern)
+	public RouteVersionBuilder<T> WithSlug(string pattern)
 	{
 		var firstIdx = pattern.IndexOf("{0}");
 		if (firstIdx is -1)
@@ -51,7 +51,7 @@ public class RouteVersionBuilder<T>
 			);
 		}
 
-		prefix = (v) => String.Format(pattern, v);
+		slug = (v) => String.Format(pattern, v);
 		return this;
 	}
 
@@ -59,7 +59,7 @@ public class RouteVersionBuilder<T>
 	{
 		return new RouteVersions<T>(
 			versions.ToDictionary((kv) => kv.Key, (kv) => kv.Value.Build()),
-			prefix
+			slug
 		);
 	}
 }

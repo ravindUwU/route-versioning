@@ -15,7 +15,7 @@ internal class DocumentInfoTransformer<T>(RouteVersions<T> versions, T version)
 		var meta = versions.GetMetadata(version);
 
 		var info = doc.Info ??= new();
-		info.Version = versions.Prefix(version);
+		info.Version = versions.GetSlug(version);
 
 		foreach (var configure in meta.GetFeatures<Extensions.ConfigureOpenApiInfoDelegate>())
 		{

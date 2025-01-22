@@ -102,7 +102,7 @@ public class VersionedEndpointRouteBuilder<T>(
 
 			if (shouldMap)
 			{
-				var vPattern = $"{versions.Prefix(version)}/{pattern.TrimStart('/')}";
+				var vPattern = $"{versions.GetSlug(version)}/{pattern.TrimStart('/')}";
 
 				var handlerBuilder = routeBuilder.MapMethods(vPattern, methods, handler)
 					.WithMetadata(meta);

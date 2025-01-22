@@ -18,7 +18,7 @@ public static class Extensions
 		{
 			var meta = versions.GetMetadata(version);
 
-			services.AddOpenApi(versions.Prefix(version), (options) =>
+			services.AddOpenApi(versions.GetSlug(version), (options) =>
 			{
 				options.AddDocumentTransformer(new DocumentInfoTransformer<T>(versions, version));
 				options.AddDocumentTransformer(new RemoveInapplicableOperationsTransformer<T>(version));

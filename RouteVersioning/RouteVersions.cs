@@ -8,17 +8,21 @@ public class RouteVersions<T> : IEnumerable<T>
 	where T : struct, IComparable
 {
 	private readonly IDictionary<T, RouteVersionMetadata<T>> versions;
+	private readonly Func<T, string> slug;
 
 	internal RouteVersions(
 		IDictionary<T, RouteVersionMetadata<T>> versions,
-		Func<T, string> prefix
+		Func<T, string> slug
 	)
 	{
 		this.versions = versions;
-		Prefix = prefix;
+		this.slug = slug;
 	}
 
-	public Func<T, string> Prefix { get; }
+	public string GetSlug(T version)
+	{
+		return slug(version);
+	}
 
 	public RouteVersionMetadata<T> GetMetadata(T version)
 	{
