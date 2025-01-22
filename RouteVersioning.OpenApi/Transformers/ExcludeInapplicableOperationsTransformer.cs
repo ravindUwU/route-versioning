@@ -7,28 +7,22 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-internal class RemoveInapplicableOperationsTransformer<T>(T version) : IOpenApiDocumentTransformer
+internal class ExcludeInapplicableOperationsTransformer<T>(T version)
+	: IOpenApiDocumentTransformer
 	where T : struct
 {
 	public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)
 	{
-		var actionsById = ctx.DescriptionGroups
-			.SelectMany((g) => g.Items)
-			.Select((d) => d.ActionDescriptor)
-			.ToDictionary((d) => d.Id);
+		var docActions = new Helpers.OpenApiDocumentActions(ctx);
 
 		var pathKeysToRemove = new List<string>();
-
 		foreach (var (pathKey, path) in doc.Paths)
 		{
 			var opKeysToRemove = new List<OperationType>();
-
 			foreach (var (opKey, op) in path.Operations)
 			{
 				if (
-					op.Annotations.TryGetValue("x-aspnetcore-id", out var _actionId)
-					&& _actionId is string actionId
-					&& actionsById.TryGetValue(actionId, out var action)
+					docActions.TryGetAction(op, out var action)
 					&& action.EndpointMetadata.OfType<IRouteVersionMetadata>().SingleOrDefault() is { } meta
 					&& !meta.IsVersion(version)
 				)

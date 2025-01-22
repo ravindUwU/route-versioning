@@ -46,7 +46,7 @@ public class Program
 	{
 		var services = app.Services;
 
-		services.AddOpenApi("current");
+		services.AddOpenApi("current", (options) => options.ExcludeVersionedOperations());
 		services.AddVersionedOpenApi(apiVersions);
 	}
 

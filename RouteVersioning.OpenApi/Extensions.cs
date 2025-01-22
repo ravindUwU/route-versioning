@@ -20,7 +20,7 @@ public static class Extensions
 			services.AddOpenApi(versions.GetSlug(version), (options) =>
 			{
 				options.AddDocumentTransformer(new DocumentInfoTransformer<T>(versions, version));
-				options.AddDocumentTransformer(new RemoveInapplicableOperationsTransformer<T>(version));
+				options.AddDocumentTransformer(new ExcludeInapplicableOperationsTransformer<T>(version));
 
 				foreach (var configure in meta.GetFeatures<ConfigureOpenApiOptionsDelegate>())
 				{
@@ -52,4 +52,9 @@ public static class Extensions
 	}
 
 	public delegate void ConfigureOpenApiInfoDelegate(OpenApiInfo info);
+
+	public static OpenApiOptions ExcludeVersionedOperations(this OpenApiOptions options)
+	{
+		return options.AddDocumentTransformer(new ExcludeVersionedOperationsTransformer());
+	}
 }
