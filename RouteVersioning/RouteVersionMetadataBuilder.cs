@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class RouteVersionMetadataBuilder<T>(T version)
+	where T : struct, IComparable
 {
 	private readonly Dictionary<Type, List<object>> features = [];
 

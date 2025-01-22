@@ -29,8 +29,8 @@ internal class RemoveInapplicableOperationsTransformer<T>(T version) : IOpenApiD
 					op.Annotations.TryGetValue("x-aspnetcore-id", out var _actionId)
 					&& _actionId is string actionId
 					&& actionsById.TryGetValue(actionId, out var action)
-					&& action.EndpointMetadata.OfType<RouteVersionEndpointMetadata>().SingleOrDefault() is { } meta
-					&& !meta.VersionComparer.Equals(meta.Version, version)
+					&& action.EndpointMetadata.OfType<IRouteVersionMetadata>().SingleOrDefault() is { } meta
+					&& !meta.IsVersion(version)
 				)
 				{
 					opKeysToRemove.Add(opKey);

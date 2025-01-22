@@ -94,11 +94,7 @@ public class VersionedEndpointRouteBuilder<T>(
 
 		foreach (var version in versions)
 		{
-			var meta = new RouteVersionEndpointMetadata
-			{
-				Version = version,
-				VersionComparer = EqualityComparer<T>.Default,
-			};
+			var meta = versions.GetMetadata(version);
 
 			var shouldMap =
 				version.CompareTo(from) >= 0

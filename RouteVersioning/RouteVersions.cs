@@ -20,6 +20,16 @@ public class RouteVersions<T> : IEnumerable<T>
 
 	public Func<T, string> Prefix { get; }
 
+	public RouteVersionMetadata<T> GetMetadata(T version)
+	{
+		return versions.TryGetValue(version, out var meta)
+			? meta
+			: throw new ArgumentException(
+				message: $"Invalid version {version}.",
+				paramName: nameof(version)
+			);
+	}
+
 	public bool Contains(T version)
 	{
 		return versions.ContainsKey(version);
