@@ -12,7 +12,7 @@ public static class Extensions
 	)
 		where T : struct, IComparable
 	{
-		foreach (var version in versions.Set)
+		foreach (var version in versions)
 		{
 			services.AddOpenApi(versions.Prefix(version), (options) =>
 			{

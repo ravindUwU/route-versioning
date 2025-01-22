@@ -1,19 +1,34 @@
 namespace RouteVersioning;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
-public class RouteVersions<T>
+public class RouteVersions<T> : IEnumerable<T>
 	where T : struct, IComparable
 {
-	internal RouteVersions(ISet<T> set, Func<T, string> prefix)
+	private readonly IDictionary<T, RouteVersionMetadata<T>> versions;
+
+	internal RouteVersions(
+		IDictionary<T, RouteVersionMetadata<T>> versions,
+		Func<T, string> prefix
+	)
 	{
-		Set = set is IReadOnlySet<T> s ? s : set.ToHashSet();
+		this.versions = versions;
 		Prefix = prefix;
 	}
 
-	public IReadOnlySet<T> Set { get; }
-
 	public Func<T, string> Prefix { get; }
+
+	public bool Contains(T version)
+	{
+		return versions.ContainsKey(version);
+	}
+
+	#region IEnumerator
+
+	public IEnumerator<T> GetEnumerator() => versions.Keys.GetEnumerator();
+	IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+	#endregion
 }

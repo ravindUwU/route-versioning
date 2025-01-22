@@ -7,12 +7,23 @@ using System.Linq;
 public class RouteVersionBuilder<T>
 	where T : struct, IComparable
 {
-	private ISet<T> versions;
+	private readonly Dictionary<T, RouteVersionMetadataBuilder<T>> versions = [];
 	private Func<T, string> prefix = (v) => $"v{v}";
 
-	public RouteVersionBuilder(params T[] versions)
+	public RouteVersionBuilder<T> WithVersion(
+		T version,
+		Action<RouteVersionMetadataBuilder<T>>? configure = null
+	)
 	{
-		this.versions = versions.ToHashSet();
+		if (versions.ContainsKey(version))
+		{
+			throw new InvalidOperationException($"The version {version} has already been added.");
+		}
+
+		var builder = new RouteVersionMetadataBuilder<T>(version);
+		versions[version] = builder;
+		configure?.Invoke(builder);
+		return this;
 	}
 
 	public RouteVersionBuilder<T> WithPrefix(Func<T, string> prefix)
@@ -46,6 +57,9 @@ public class RouteVersionBuilder<T>
 
 	public RouteVersions<T> Build()
 	{
-		return new RouteVersions<T>(versions, prefix);
+		return new RouteVersions<T>(
+			versions.ToDictionary((kv) => kv.Key, (kv) => kv.Value.Build()),
+			prefix
+		);
 	}
 }

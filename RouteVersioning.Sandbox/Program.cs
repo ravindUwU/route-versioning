@@ -21,7 +21,10 @@ public class Program
 		app.Run();
 	}
 
-	private static readonly RouteVersions<int> apiVersions = new RouteVersionBuilder<int>(1, 2, 3)
+	private static readonly RouteVersions<int> apiVersions = new RouteVersionBuilder<int>()
+		.WithVersion(1)
+		.WithVersion(2)
+		.WithVersion(3)
 		.Build();
 
 	private static void ConfigureServices(WebApplicationBuilder app)
