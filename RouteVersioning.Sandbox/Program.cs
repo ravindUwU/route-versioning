@@ -2,10 +2,13 @@ namespace RouteVersioning.Sandbox;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using RouteVersioning.OpenApi;
 using Scalar.AspNetCore;
+using System.Threading;
 using System.Threading.Tasks;
 
 public class Program
@@ -22,7 +25,15 @@ public class Program
 	}
 
 	private static readonly RouteVersions<int> apiVersions = new RouteVersionBuilder<int>()
-		.WithVersion(1)
+		.WithVersion(1, (v) => v
+			.ConfigureOpenApiInfo((i) =>
+			{
+				i.Description = "v1 Description!!!";
+			})
+			.ConfigureOpenApiOptions((options) => options
+				.AddDocumentTransformer<V1DocumentTransformer>()
+			)
+		)
 		.WithVersion(2)
 		.WithVersion(3)
 		.Build();
@@ -79,6 +90,17 @@ public class Program
 			{
 				logger.LogInformation("Finished: {label}", label);
 			}
+		}
+	}
+
+	private class V1DocumentTransformer(
+		ILogger<V1DocumentTransformer> logger
+	) : IOpenApiDocumentTransformer
+	{
+		public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)
+		{
+			logger.LogInformation("Transformed!!");
+			return Task.CompletedTask;
 		}
 	}
 }
