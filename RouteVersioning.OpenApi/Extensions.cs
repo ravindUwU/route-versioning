@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RouteVersioning.OpenApi.Transformers;
-using System;
 
 public static class Extensions
 {
@@ -12,7 +11,7 @@ public static class Extensions
 		this IServiceCollection services,
 		RouteVersions<T> versions
 	)
-		where T : struct, IComparable
+		where T : struct
 	{
 		foreach (var version in versions)
 		{
@@ -36,7 +35,7 @@ public static class Extensions
 		this RouteVersionMetadataBuilder<T> builder,
 		ConfigureOpenApiOptionsDelegate configure
 	)
-		where T : struct, IComparable
+		where T : struct
 	{
 		return builder.WithFeature(configure);
 	}
@@ -47,7 +46,7 @@ public static class Extensions
 		this RouteVersionMetadataBuilder<T> builder,
 		ConfigureOpenApiInfoDelegate configure
 	)
-		where T : struct, IComparable
+		where T : struct
 	{
 		return builder.WithFeature(configure);
 	}

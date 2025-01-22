@@ -11,7 +11,7 @@ public class VersionedEndpointRouteBuilder<T>(
 	IEndpointRouteBuilder routeBuilder,
 	RouteVersions<T> versions
 )
-	where T : struct, IComparable
+	where T : struct
 {
 
 	// GET
@@ -97,8 +97,8 @@ public class VersionedEndpointRouteBuilder<T>(
 			var meta = versions.GetMetadata(version);
 
 			var shouldMap =
-				version.CompareTo(from) >= 0
-				&& (to is null || version.CompareTo(to) <= 0);
+				versions.Compare(version, from) >= 0
+				&& (to is null || versions.Compare(version, to.Value) <= 0);
 
 			if (shouldMap)
 			{

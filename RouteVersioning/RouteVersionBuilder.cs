@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class RouteVersionBuilder<T>
-	where T : struct, IComparable
+	where T : struct
 {
 	private readonly Dictionary<T, RouteVersionMetadataBuilder<T>> versions = [];
 	private Func<T, string> slug = (v) => $"v{v}";
+	private IComparer<T> comparer = Comparer<T>.Default;
 
 	public RouteVersionBuilder<T> WithVersion(
 		T version,
@@ -55,11 +56,18 @@ public class RouteVersionBuilder<T>
 		return this;
 	}
 
+	public RouteVersionBuilder<T> WithComparer(IComparer<T> comparer)
+	{
+		this.comparer = comparer;
+		return this;
+	}
+
 	public RouteVersions<T> Build()
 	{
 		return new RouteVersions<T>(
 			versions.ToDictionary((kv) => kv.Key, (kv) => kv.Value.Build()),
-			slug
+			slug,
+			comparer
 		);
 	}
 }

@@ -2,13 +2,12 @@ namespace RouteVersioning.OpenApi.Transformers;
 
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 internal class DocumentInfoTransformer<T>(RouteVersions<T> versions, T version)
 	: IOpenApiDocumentTransformer
-	where T : struct, IComparable
+	where T : struct
 {
 	public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)
 	{

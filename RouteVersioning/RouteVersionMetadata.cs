@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class RouteVersionMetadata<T> : IRouteVersionMetadata<T>
-	where T : struct, IComparable
+	where T : struct
 {
 	private readonly IDictionary<Type, IEnumerable<object>> features;
 

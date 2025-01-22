@@ -1,6 +1,5 @@
 namespace RouteVersioning;
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -19,7 +18,7 @@ public interface IRouteVersionMetadata
 }
 
 public interface IRouteVersionMetadata<T> : IRouteVersionMetadata
-	where T : struct, IComparable
+	where T : struct
 {
 	new T Version { get; }
 
