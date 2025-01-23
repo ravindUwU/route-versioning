@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RouteVersioning.OpenApi;
 using Scalar.AspNetCore;
+using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -66,15 +68,52 @@ public class Program
 		api.MapGet((2, 3), "2-to-3", () => "2-to-3");
 
 		// openapi/current.json
-		// openapi/v[1-3].json
+		// openapi/v{1,2,3}.json
 		app.MapOpenApi();
 
 		// scalar/current
+		// scalar/v{1,2,3}
 		app.MapScalarApiReference((options) => options
 			.WithDefaultOpenAllTags(true)
 			.WithDefaultFonts(false)
 			.WithDefaultHttpClient(ScalarTarget.Http, ScalarClient.Http11)
 		);
+
+		// Swagger UI
+		app.MapGet("swagger", () =>
+		{
+			var urls = new[] { "current" }
+				.Concat(apiVersions.Select(apiVersions.GetSlug))
+				.Select((name) => new { name, url = $"/openapi/{name}.json" });
+
+			return Results.Content(contentType: "text/html", content: $$"""
+				<!DOCTYPE html>
+				<html>
+				<head>
+					<meta name="viewport" content="width=device-width, initial-scale=1" />
+					<style>body { margin: 0 }</style>
+					<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.18.2/swagger-ui.css" />
+				</head>
+				<body>
+					<div id="swagger-ui"></div>
+					<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.18.2/swagger-ui-bundle.js"></script>
+					<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.18.2/swagger-ui-standalone-preset.js"></script>
+					<script>
+						SwaggerUIBundle({
+							urls: {{JsonSerializer.Serialize(urls)}},
+							dom_id: '#swagger-ui',
+							presets: [
+								SwaggerUIBundle.presets.apis,
+								SwaggerUIStandalonePreset,
+							],
+							layout: 'StandaloneLayout',
+						});
+					</script>
+				</body>
+				</html>
+				"""
+			);
+		});
 	}
 
 	private class Filter1OnwardEndpoint(ILogger<Filter1OnwardEndpoint> logger) : IEndpointFilter
