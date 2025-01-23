@@ -1,20 +1,27 @@
 namespace RouteVersioning;
 
+using Microsoft.AspNetCore.Builder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 /// <inheritdoc cref="RouteVersionMetadata{T}"/>
 public class RouteVersionMetadataBuilder<T>
+	: IEndpointConventionBuilder
 	where T : struct
 {
 	private readonly T version;
 	private readonly Dictionary<Type, List<object>> features = [];
+	private readonly List<Action<EndpointBuilder>> conventions = [];
+	private readonly List<Action<EndpointBuilder>> finallyConventions = [];
 
 	internal RouteVersionMetadataBuilder(T version)
 	{
 		this.version = version;
 	}
+
+	void IEndpointConventionBuilder.Add(Action<EndpointBuilder> convention) => conventions.Add(convention);
+	void IEndpointConventionBuilder.Finally(Action<EndpointBuilder> convention) => finallyConventions.Add(convention);
 
 	/// <summary>
 	/// Adds a feature associated with the API version. The feature can be subsequently retrieved
@@ -39,7 +46,9 @@ public class RouteVersionMetadataBuilder<T>
 	{
 		return new RouteVersionMetadata<T>(
 			version,
-			features: features.ToDictionary((kv) => kv.Key, (kv) => kv.Value.AsEnumerable())
+			features: features.ToDictionary((kv) => kv.Key, (kv) => kv.Value.AsEnumerable()),
+			conventions,
+			finallyConventions
 		);
 	}
 }

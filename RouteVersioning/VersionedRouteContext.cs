@@ -112,9 +112,13 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 					),
 					ApplicationServices = builder.outer.ServiceProvider,
 					Conventions = [
-						// Add route version metadata.
+						// Add convention to add route version metadata to the endpoint.
 						(b) => b.Metadata.Add(meta),
+
+						// Add version-specific conventions.
+						.. meta.conventions,
 					],
+					FinallyConventions = meta.finallyConventions,
 				};
 
 				var shouldMap =

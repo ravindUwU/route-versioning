@@ -1,5 +1,6 @@
 namespace RouteVersioning;
 
+using Microsoft.AspNetCore.Builder;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +12,20 @@ public class RouteVersionMetadata<T> : IRouteVersionMetadata<T>
 	where T : struct
 {
 	private readonly IDictionary<Type, IEnumerable<object>> features;
+	internal readonly IReadOnlyList<Action<EndpointBuilder>> conventions;
+	internal readonly IReadOnlyList<Action<EndpointBuilder>> finallyConventions;
 
-	internal RouteVersionMetadata(T version, IDictionary<Type, IEnumerable<object>> features)
+	internal RouteVersionMetadata(
+		T version,
+		IDictionary<Type, IEnumerable<object>> features,
+		IReadOnlyList<Action<EndpointBuilder>> conventions,
+		IReadOnlyList<Action<EndpointBuilder>> finallyConventions
+	)
 	{
 		Version = version;
 		this.features = features;
+		this.conventions = conventions;
+		this.finallyConventions = finallyConventions;
 	}
 
 	/// <summary>

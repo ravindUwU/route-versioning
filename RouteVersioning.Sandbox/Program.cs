@@ -29,10 +29,6 @@ public class Program
 
 	private static readonly RouteVersions<int> versions = new RouteVersionBuilder<int>()
 		.WithVersion(1, (v) => v
-			// TODO: implement this!
-			//.ConfigureEndpoints((e) => e
-			//	.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
-			//)
 			.ConfigureOpenApiInfo((i) =>
 			{
 				i.Description = "v1 Description!!!";
@@ -40,6 +36,7 @@ public class Program
 			.ConfigureOpenApiOptions((options) => options
 				.AddDocumentTransformer<V1DocumentTransformer>()
 			)
+			.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
 		)
 		.WithVersion(2)
 		.WithVersion(3)
