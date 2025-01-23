@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 /// <item>Runs configuration delegates added via <see cref="Extensions.ConfigureOpenApiInfo{T}"/>.</item>
 /// </list>
 /// </summary>
-internal class DocumentInfoTransformer<T>(RouteVersions<T> versions, T version)
+internal class DocumentInfoTransformer<T>(RouteVersionSet<T> versions, T version)
 	: IOpenApiDocumentTransformer
 	where T : struct
 {
@@ -24,7 +24,7 @@ internal class DocumentInfoTransformer<T>(RouteVersions<T> versions, T version)
 		info.Version = versions.GetSlug(version);
 
 		// Run config delegates.
-		foreach (var configure in meta.GetFeatures<Extensions.ConfigureOpenApiInfoDelegate>())
+		foreach (var configure in meta.GetFeatures<RouteVersioningOpenApiExtensions.ConfigureOpenApiInfoDelegate>())
 		{
 			configure(info);
 		}

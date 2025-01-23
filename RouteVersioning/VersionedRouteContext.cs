@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Allows mapping routes associated with the specified <see cref="RouteVersions{T}"/>.
+/// Allows mapping routes associated with the specified <see cref="RouteVersionSet{T}"/>.
 /// </summary>
-public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteVersions<T> versions)
+public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteVersionSet<T> versions)
 	where T : struct
 {
 	/// <summary>
@@ -79,7 +79,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 
 	// The data source yields endpoints collected by the builder, across all applicable API versions.
 	internal class DataSource(
-		RouteVersions<T> versions,
+		RouteVersionSet<T> versions,
 		Builder builder,
 		T from,
 		T? to

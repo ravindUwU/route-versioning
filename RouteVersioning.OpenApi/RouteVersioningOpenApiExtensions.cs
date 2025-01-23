@@ -6,10 +6,10 @@ using Microsoft.OpenApi.Models;
 using RouteVersioning.OpenApi.Transformers;
 using System;
 
-public static class Extensions
+public static class RouteVersioningOpenApiExtensions
 {
 	/// <summary>
-	/// Adds OpenAPI documents for API versions defined in the specified <see cref="RouteVersions{T}"/>;
+	/// Adds OpenAPI documents for API versions defined in the specified <see cref="RouteVersionSet{T}"/>;
 	/// each version-specific document,
 	/// <list type="bullet">
 	/// <item>Corresponding to a single API version.</item>
@@ -29,7 +29,7 @@ public static class Extensions
 	/// </param>
 	public static IServiceCollection AddVersionedOpenApi<T>(
 		this IServiceCollection services,
-		RouteVersions<T> versions,
+		RouteVersionSet<T> versions,
 		Action<OpenApiOptions>? configure = null,
 		bool includeUnversionedEndpoints = true
 	)

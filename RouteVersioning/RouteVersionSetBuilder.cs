@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-/// <inheritdoc cref="RouteVersions{T}"/>
-public class RouteVersionBuilder<T>
+/// <inheritdoc cref="RouteVersionSet{T}"/>
+public class RouteVersionSetBuilder<T>
 	where T : struct
 {
 	private readonly Dictionary<T, RouteVersionMetadataBuilder<T>> versions = [];
@@ -22,7 +22,7 @@ public class RouteVersionBuilder<T>
 	/// Thrown if the specified API version is already been defined. An API version may be defined
 	/// only once.
 	/// </exception>
-	public RouteVersionBuilder<T> WithVersion(
+	public RouteVersionSetBuilder<T> Version(
 		T version,
 		Action<RouteVersionMetadataBuilder<T>>? configure = null
 	)
@@ -45,7 +45,7 @@ public class RouteVersionBuilder<T>
 	/// Defaults to the format <c>v{0}</c> where <c>{0}</c> is the default string representation of
 	/// the version.
 	/// </remarks>
-	public RouteVersionBuilder<T> WithSlug(Func<T, string> slug)
+	public RouteVersionSetBuilder<T> WithSlug(Func<T, string> slug)
 	{
 		this.slug = slug;
 		return this;
@@ -63,7 +63,7 @@ public class RouteVersionBuilder<T>
 	/// <exception cref="ArgumentException">
 	/// Thrown if the pattern doesn't include the placeholder, or includes more than 1 placeholder.
 	/// </exception>
-	public RouteVersionBuilder<T> WithSlug(string pattern)
+	public RouteVersionSetBuilder<T> WithSlug(string pattern)
 	{
 		var firstIdx = pattern.IndexOf("{0}");
 		if (firstIdx is -1)
@@ -92,15 +92,15 @@ public class RouteVersionBuilder<T>
 	/// <remarks>
 	/// Defaults to <see cref="Comparer{T}.Default"/>.
 	/// </remarks>
-	public RouteVersionBuilder<T> WithComparer(IComparer<T> comparer)
+	public RouteVersionSetBuilder<T> WithComparer(IComparer<T> comparer)
 	{
 		this.comparer = comparer;
 		return this;
 	}
 
-	public RouteVersions<T> Build()
+	public RouteVersionSet<T> Build()
 	{
-		return new RouteVersions<T>(
+		return new RouteVersionSet<T>(
 			versions.ToDictionary((kv) => kv.Key, (kv) => kv.Value.Build()),
 			slug,
 			comparer

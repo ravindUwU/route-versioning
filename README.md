@@ -34,14 +34,14 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
 
 ### Mapping a Versioned API
 
-1. Define all available API versions with a `RouteVersionBuilder`.
+1. Define all available API versions with a `RouteVersionSetBuilder`.
 
    ```csharp
    // In this case, the API has 3 versions.
-   var versions = new RouteVersionBuilder<int>()
-   	.WithVersion(1)
-   	.WithVersion(2)
-   	.WithVersion(3)
+   var versions = new RouteVersionSetBuilder<int>()
+   	.Version(1)
+   	.Version(2)
+   	.Version(3)
    	.Build();
    ```
 
@@ -99,11 +99,11 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
   ```
 
 - To add a convention that applies to _all endpoints of a specific API version_ (`v1/*`), use the
-  configuration delegate of `RouteVersionBuilder.WithVersion`.
+  configuration delegate of `RouteVersionSetBuilder.Version`.
 
   ```csharp
-  var versions = new RouteVersionBuilder<int>()
-   	.WithVersion(1, (v) => v
+  var versions = new RouteVersionSetBuilder<int>()
+   	.Version(1, (v) => v
   		.AddEndpointFilter<IEndpointConventionBuilder, UwuifyFilter>()
   	)
    	.Build();
@@ -143,11 +143,11 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
   // openapi/v3.json includes api/v3/{a,b,c,e}
   ```
 
-  Use the configuration delegate of `RouteVersionBuilder.WithVersion` to configure version-specific
+  Use the configuration delegate of `RouteVersionSetBuilder.Version` to configure version-specific
   OpenAPI options.
 
   ```csharp
-  new RouteVersionBuilder<int>().WithVersion(1, (v) => v
+  new RouteVersionSetBuilder<int>().Version(1, (v) => v
   	.ConfigureOpenApiInfo((i) => i.Description = "v1 description")
   	.ConfigureOpenApiOptions(...)
   );

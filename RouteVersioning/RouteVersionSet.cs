@@ -5,16 +5,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// Defines available API versions.
+/// Defines all available API versions.
 /// </summary>
-public class RouteVersions<T> : IEnumerable<T>
+public class RouteVersionSet<T> : IEnumerable<T>
 	where T : struct
 {
 	private readonly IDictionary<T, RouteVersionMetadata<T>> versions;
 	private readonly Func<T, string> slug;
 	private readonly IComparer<T> comparer;
 
-	internal RouteVersions(
+	internal RouteVersionSet(
 		IDictionary<T, RouteVersionMetadata<T>> versions,
 		Func<T, string> slug,
 		IComparer<T> comparer
@@ -37,7 +37,7 @@ public class RouteVersions<T> : IEnumerable<T>
 	/// Retrieve metadata of the specified version.
 	/// </summary>
 	/// <exception cref="ArgumentException">
-	/// Thrown if specified version hasn't been registered with <see cref="RouteVersionBuilder{T}.WithVersion"/>.
+	/// Thrown if specified version hasn't been registered with <see cref="RouteVersionSetBuilder{T}.Version"/>.
 	/// </exception>
 	public RouteVersionMetadata<T> GetMetadata(T version)
 	{

@@ -2,12 +2,12 @@ namespace RouteVersioning;
 
 using Microsoft.AspNetCore.Routing;
 
-public static class Extensions
+public static class RouteVersioningExtensions
 {
 	/// <inheritdoc cref="VersionedRouteContext{T}"/>
 	public static VersionedRouteContext<T> WithVersions<T>(
 		this IEndpointRouteBuilder routeBuilder,
-		RouteVersions<T> versions
+		RouteVersionSet<T> versions
 	)
 		where T : struct
 

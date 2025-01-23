@@ -27,8 +27,8 @@ public class Program
 		app.Run();
 	}
 
-	private static readonly RouteVersions<int> versions = new RouteVersionBuilder<int>()
-		.WithVersion(1, (v) => v
+	private static readonly RouteVersionSet<int> versions = new RouteVersionSetBuilder<int>()
+		.Version(1, (v) => v
 			.ConfigureOpenApiInfo((i) =>
 			{
 				i.Description = "v1 Description!!!";
@@ -38,8 +38,8 @@ public class Program
 			)
 			.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
 		)
-		.WithVersion(2)
-		.WithVersion(3)
+		.Version(2)
+		.Version(3)
 		.Build();
 
 	private static void ConfigureServices(WebApplicationBuilder app)
