@@ -48,8 +48,13 @@ public class Program
 	{
 		var services = app.Services;
 
-		services.AddOpenApi("current", (options) => options.ExcludeVersionedOperations());
-		services.AddVersionedOpenApi(apiVersions);
+		services.AddOpenApi("current", (options) => options.AddDocumentTransformer(new ClearServers()));
+
+		services.AddVersionedOpenApi(
+			apiVersions,
+			(options) => options.AddDocumentTransformer(new ClearServers()),
+			includeUnversionedEndpoints: false
+		);
 	}
 
 	private static void ConfigureApp(WebApplication app)
@@ -58,14 +63,17 @@ public class Program
 
 		var api = app.MapGroup("api").WithVersions(apiVersions);
 
-		api.MapGet(1, "1-onward", () => "1-onward")
-			.AddEndpointFilter<IEndpointConventionBuilder, Filter1OnwardEndpoint>();
+		api.MapGet(1, "a", () => "a");
+		api.MapGet(2, "b", () => "b");
+		api.MapGet(3, "c", () => "c");
 
-		api.MapGet(2, "2-onward", () => "2-onward");
-		api.MapGet(3, "3-onward", () => "3-onward");
+		api.MapGet((1, 2), "d", () => "d");
 
-		api.MapGet((1, 2), "1-to-2", () => "1-to-2");
-		api.MapGet((2, 3), "2-to-3", () => "2-to-3");
+		api.MapGet((1, 2), "e", () => "e");
+		api.MapGet(3, "e", () => "e");
+
+		api.MapGet((1, 2), "owo", () => "owo");
+		api.MapGet(3, "owo", () => "OwO");
 
 		// openapi/current.json
 		// openapi/v{1,2,3}.json
@@ -159,6 +167,15 @@ public class Program
 		public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)
 		{
 			logger.LogInformation("Transformed!!");
+			return Task.CompletedTask;
+		}
+	}
+
+	private class ClearServers : IOpenApiDocumentTransformer
+	{
+		public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)
+		{
+			doc.Servers?.Clear();
 			return Task.CompletedTask;
 		}
 	}

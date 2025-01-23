@@ -1,0 +1,13 @@
+{
+	"files.exclude": {
+		"**/.vs/": true,
+		"**/node_modules/": true,
+		"**/bin/": true,
+		"**/obj/": true,
+	},
+	"files.readonlyInclude": {
+		"pnpm-lock.yaml": true,
+	},
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+}
