@@ -7,6 +7,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+/// <summary>
+/// <list type="bullet">
+/// <item>Removes operations of endpoints that are associated with any API version.</item>
+/// </list>
+/// </summary>
 internal class ExcludeVersionedOperationsTransformer : IOpenApiDocumentTransformer
 {
 	public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)

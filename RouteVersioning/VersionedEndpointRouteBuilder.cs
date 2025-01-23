@@ -7,64 +7,100 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-public class VersionedEndpointRouteBuilder<T>(
-	IEndpointRouteBuilder routeBuilder,
-	RouteVersions<T> versions
-)
-	where T : struct
+/// <summary>
+/// Contains methods to map versioned minimal API endpoints, via <see cref="Extensions.WithVersions"/>.
+/// </summary>
+public class VersionedEndpointRouteBuilder<T> where T : struct
 {
+	private readonly IEndpointRouteBuilder routeBuilder;
+	private readonly RouteVersions<T> versions;
+
+	public VersionedEndpointRouteBuilder(
+		IEndpointRouteBuilder routeBuilder,
+		RouteVersions<T> versions
+	)
+	{
+		this.routeBuilder = routeBuilder;
+		this.versions = versions;
+	}
 
 	// GET
 
+	/// <inheritdoc cref="MapMethods(T, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapGet(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Get], handler);
 
+	/// <inheritdoc cref="MapMethods(ValueTuple{T, T}, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapGet((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Get], handler);
 
 	// POST
 
+	/// <inheritdoc cref="MapMethods(T, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapPost(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Post], handler);
 
+	/// <inheritdoc cref="MapMethods(ValueTuple{T, T}, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapPost((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Post], handler);
 
 	// PUT
 
+	/// <inheritdoc cref="MapMethods(T, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapPut(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Put], handler);
 
+	/// <inheritdoc cref="MapMethods(ValueTuple{T, T}, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapPut((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Put], handler);
 
 	// DELETE
 
+	/// <inheritdoc cref="MapMethods(T, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapDelete(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Delete], handler);
 
+	/// <inheritdoc cref="MapMethods(ValueTuple{T, T}, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapDelete((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Delete], handler);
 
 	// PATCH
 
+	/// <inheritdoc cref="MapMethods(T, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapPatch(T from, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, [HttpMethods.Patch], handler);
 
+
+	/// <inheritdoc cref="MapMethods(ValueTuple{T, T}, IEnumerable{string}, string, Delegate)"/>
 	public IEndpointConventionBuilder MapPatch((T From, T To) range, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, [HttpMethods.Patch], handler);
 
-	// Methods
+	// Any method
 
+	/// <summary>
+	/// Map an endpoint that is available from the specified API version onward.
+	/// </summary>
+	/// <returns>
+	/// Builder that allows configuring conventions for the endpoint across all API versions that
+	/// offer it.
+	/// </returns>
 	public IEndpointConventionBuilder MapMethods(T from, IEnumerable<string> methods, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(from, null, pattern, methods, handler);
 
+	/// <summary>
+	/// Map an endpoint that is available in all versions within the specified inclusive range of
+	/// API versions.
+	/// </summary>
+	/// <returns>
+	/// Builder that allows configuring conventions for the endpoint across all API versions that
+	/// offer it.
+	/// </returns>
 	public IEndpointConventionBuilder MapMethods((T From, T To) range, IEnumerable<string> methods, [StringSyntax("Route")] string pattern, Delegate handler)
 		=> Map(range.From, range.To, pattern, methods, handler);
 
 	// Implementation
 
-	private IEndpointConventionBuilder Map(
+	private EndpointConventionBuilder Map(
 		T from,
 		T? to,
 		[StringSyntax("Route")] string pattern,

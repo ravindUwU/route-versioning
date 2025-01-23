@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Routing;
 
 public static class Extensions
 {
+	/// <summary>
+	/// Map versioned minimal API endpoints.
+	/// </summary>
 	public static VersionedEndpointRouteBuilder<T> WithVersions<T>(
 		this IEndpointRouteBuilder routeBuilder,
 		RouteVersions<T> versions
@@ -14,6 +17,9 @@ public static class Extensions
 		return new VersionedEndpointRouteBuilder<T>(routeBuilder, versions);
 	}
 
+	/// <summary>
+	/// Configures conventions for all endpoints of a specific API version.
+	/// </summary>
 	public static RouteVersionMetadataBuilder<T> ConfigureEndpoints<T>(
 		this RouteVersionMetadataBuilder<T> builder,
 		ConfigureEndpointConventionsDelegate configure

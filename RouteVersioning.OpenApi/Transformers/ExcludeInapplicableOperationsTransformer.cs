@@ -7,13 +7,27 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-internal class ExcludeInapplicableOperationsTransformer<T>(
-	T version,
-	bool includeUnversionedEndpoints
-)
-	: IOpenApiDocumentTransformer
+/// <summary>
+/// <list type="bullet">
+/// <item>Removes operations of endpoints that aren't included in a specific API version.</item>
+/// <item>Removes operations of unversioned endpoints if <see cref="includeUnversionedEndpoints"/> is <see langword="false"/>.</item>
+/// </list>
+/// </summary>
+internal class ExcludeInapplicableOperationsTransformer<T> : IOpenApiDocumentTransformer
 	where T : struct
 {
+	private readonly T version;
+	private readonly bool includeUnversionedEndpoints;
+
+	public ExcludeInapplicableOperationsTransformer(
+		T version,
+		bool includeUnversionedEndpoints
+	)
+	{
+		this.version = version;
+		this.includeUnversionedEndpoints = includeUnversionedEndpoints;
+	}
+
 	public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)
 	{
 		var docActions = new Helpers.OpenApiDocumentActions(ctx);

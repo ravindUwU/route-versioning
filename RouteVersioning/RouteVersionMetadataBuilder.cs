@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+/// <inheritdoc cref="RouteVersionMetadata{T}"/>
 public class RouteVersionMetadataBuilder<T>
 	where T : struct
 {
@@ -15,6 +16,10 @@ public class RouteVersionMetadataBuilder<T>
 		this.version = version;
 	}
 
+	/// <summary>
+	/// Adds a feature associated with the API version. The feature can be subsequently retrieved
+	/// via <see cref="RouteVersionMetadata{T}.GetFeatures"/>.
+	/// </summary>
 	public RouteVersionMetadataBuilder<T> WithFeature<F>(F feature)
 		where F : notnull
 	{
