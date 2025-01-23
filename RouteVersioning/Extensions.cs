@@ -2,19 +2,19 @@ namespace RouteVersioning;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using System;
 
 public static class Extensions
 {
-	/// <summary>
-	/// Map versioned minimal API endpoints.
-	/// </summary>
-	public static VersionedEndpointRouteBuilder<T> WithVersions<T>(
+	/// <inheritdoc cref="VersionedRouteContext{T}"/>
+	public static VersionedRouteContext<T> WithVersions<T>(
 		this IEndpointRouteBuilder routeBuilder,
 		RouteVersions<T> versions
 	)
 		where T : struct
+
 	{
-		return new VersionedEndpointRouteBuilder<T>(routeBuilder, versions);
+		return new VersionedRouteContext<T>(routeBuilder, versions);
 	}
 
 	/// <summary>
@@ -26,7 +26,8 @@ public static class Extensions
 	)
 		where T : struct
 	{
-		return builder.WithFeature(configure);
+		// TODO: implement this!
+		throw new NotImplementedException();
 	}
 
 	public delegate void ConfigureEndpointConventionsDelegate(IEndpointConventionBuilder builder);

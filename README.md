@@ -1,8 +1,7 @@
 # Route Versioning
 
 An attempt at implementing route-based API versioning for ASP.NET Core. This library works by
-exhaustively mapping request handlers to all corresponding API versions, on startup. Only minimal
-APIs are currently supported.
+exhaustively all corresponding API versions, on startup. Only minimal APIs are currently supported.
 
 > [!WARNING]
 >
@@ -54,29 +53,29 @@ APIs are currently supported.
    var api = app.MapGroup("api").WithVersions(versions);
    ```
 
-   - Specify the version to map an endpoint that is available **from a specific version onward**.
+   - Use `From` to map an endpoint that is available **from a specific version onward**.
 
      ```csharp
      // api/v1/a (introduced)
      // api/v2/a (unchanged)
      // api/v3/a (unchanged)
-     api.MapGet(1, "a", () => ...);
+     api.From(1).MapGet("a", () => ...);
 
      // api/v2/b (introduced)
      // api/v3/b (unchanged)
-     api.MapGet(2, "b", () => ...);
+     api.From(2).MapGet("b", () => ...);
 
      // api/v3/c (introduced)
-     api.MapGet(3, "c", () => ...);
+     api.From(3).MapGet("c", () => ...);
      ```
 
-   - Specify a 2-tuple of versions to map an endpoint that is available **in all versions within an
-     inclusive range** of versions.
+   - Use `Between` to map an endpoint that is available **in all versions within an inclusive
+     range** of versions.
 
      ```csharp
      // api/v1/d (introduced)
      // api/v2/d (unchanged; retired)
-     api.MapGet((1, 2), "d", () => ...);
+     api.Between(1, 2).MapGet("d", () => ...);
      ```
 
    - Combine the two to **revise an endpoint** at a specific version.
@@ -84,10 +83,10 @@ APIs are currently supported.
      ```csharp
      // api/v1/e (introduced)
      // api/v2/e (unchanged)
-     api.MapGet((1, 2), "e", () => ...);
+     api.Between(1, 2).MapGet("e", () => ...);
 
      // api/v3/e (revised)
-     api.MapGet(3, "e", () => ...);
+     api.From(3).MapGet("e", () => ...);
      ```
 
 ### Generating OpenAPI Documents

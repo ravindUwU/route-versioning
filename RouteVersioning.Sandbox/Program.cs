@@ -27,11 +27,12 @@ public class Program
 		app.Run();
 	}
 
-	private static readonly RouteVersions<int> apiVersions = new RouteVersionBuilder<int>()
+	private static readonly RouteVersions<int> versions = new RouteVersionBuilder<int>()
 		.WithVersion(1, (v) => v
-			.ConfigureEndpoints((e) => e
-				.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
-			)
+			// TODO: implement this!
+			//.ConfigureEndpoints((e) => e
+			//	.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
+			//)
 			.ConfigureOpenApiInfo((i) =>
 			{
 				i.Description = "v1 Description!!!";
@@ -51,7 +52,7 @@ public class Program
 		services.AddOpenApi("current", (options) => options.AddDocumentTransformer(new ClearServers()));
 
 		services.AddVersionedOpenApi(
-			apiVersions,
+			versions,
 			(options) => options.AddDocumentTransformer(new ClearServers()),
 			includeUnversionedEndpoints: false
 		);
@@ -61,19 +62,19 @@ public class Program
 	{
 		app.MapGet("uwu", () => "UwU");
 
-		var api = app.MapGroup("api").WithVersions(apiVersions);
+		var api = app.MapGroup("api").WithVersions(versions);
 
-		api.MapGet(1, "a", () => "a");
-		api.MapGet(2, "b", () => "b");
-		api.MapGet(3, "c", () => "c");
+		api.From(1).MapGet("a", () => "a").AddEndpointFilter<FilterAEndpoint>();
+		api.From(2).MapGet("b", () => "b");
+		api.From(3).MapGet("c", () => "c");
 
-		api.MapGet((1, 2), "d", () => "d");
+		api.Between(1, 2).MapGet("d", () => "d");
 
-		api.MapGet((1, 2), "e", () => "e");
-		api.MapGet(3, "e", () => "e");
+		api.Between(1, 2).MapGet("e", () => "e");
+		api.From(3).MapGet("e", () => "e");
 
-		api.MapGet((1, 2), "owo", () => "owo");
-		api.MapGet(3, "owo", () => "OwO");
+		api.Between(1, 2).MapGet("owo", () => "owo");
+		api.From(3).MapGet("owo", () => "OwO");
 
 		// openapi/current.json
 		// openapi/v{1,2,3}.json
@@ -91,7 +92,7 @@ public class Program
 		app.MapGet("swagger", () =>
 		{
 			var urls = new[] { "current" }
-				.Concat(apiVersions.Select(apiVersions.GetSlug))
+				.Concat(versions.Select(versions.GetSlug))
 				.Select((name) => new { name, url = $"/openapi/{name}.json" });
 
 			return Results.Content(contentType: "text/html", content: $$"""
@@ -124,7 +125,7 @@ public class Program
 		});
 	}
 
-	private class Filter1OnwardEndpoint(ILogger<Filter1OnwardEndpoint> logger) : IEndpointFilter
+	private class FilterAEndpoint(ILogger<FilterAEndpoint> logger) : IEndpointFilter
 	{
 		public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext ctx, EndpointFilterDelegate next)
 		{
