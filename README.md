@@ -32,10 +32,9 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
 
 ## Usage
 
-### API Versioning
+### Mapping a Versioned API
 
-1. Use a `RouteVersionBuilder.WithVersion` to **define all available API versions**. A configuration
-   delegate can be optionally specified to apply version-specific configuration.
+1. Define all available API versions with a `RouteVersionBuilder`.
 
    ```csharp
    // In this case, the API has 3 versions.
@@ -46,14 +45,14 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
    	.Build();
    ```
 
-2. Use `WithVersions` to **map versioned endpoints**, specifying the range of versions to which they
+2. Use `WithVersions` to map versioned endpoints, specifying the range of versions to which they
    apply.
 
    ```csharp
    var api = app.MapGroup("api").WithVersions(versions);
    ```
 
-   - Use `From` to map an endpoint that is available **from a specific version onward**.
+   - Use `From` to map an endpoint that is available _from a specific version onward_.
 
      ```csharp
      // api/v1/a (introduced)
@@ -69,8 +68,8 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
      api.From(3).MapGet("c", () => ...);
      ```
 
-   - Use `Between` to map an endpoint that is available **in all versions within an inclusive
-     range** of versions.
+   - Use `Between` to map an endpoint that is available _in all versions within an inclusive range_
+     of versions.
 
      ```csharp
      // api/v1/d (introduced)
@@ -78,7 +77,7 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
      api.Between(1, 2).MapGet("d", () => ...);
      ```
 
-   - Combine the two to **revise an endpoint** at a specific version.
+   - Combine the two to _revise an endpoint_ at a specific version.
 
      ```csharp
      // api/v1/e (introduced)
@@ -88,6 +87,27 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
      // api/v3/e (revised)
      api.From(3).MapGet("e", () => ...);
      ```
+
+### Adding Endpoint Conventions
+
+- To add a convention that applies to _a specific endpoint across a range of API versions_ (`v*/a`),
+  add a convention as you normally would, after the `Map*` call.
+
+  ```csharp
+  api.Between(1, 2).MapGet("a", () => ...).AddEndpointFilter<UwuifyFilter>();
+  api.From(3).MapGet("a", () => ...).AddEndpointFilter<UwuifyFilter>();
+  ```
+
+- To add a convention that applies to _all endpoints of a specific API version_ (`v1/*`), use the
+  configuration delegate of `RouteVersionBuilder.WithVersion`.
+
+  ```csharp
+  var versions = new RouteVersionBuilder<int>()
+   	.WithVersion(1, (v) => v
+  		.AddEndpointFilter<IEndpointConventionBuilder, UwuifyFilter>()
+  	)
+   	.Build();
+  ```
 
 ### Generating OpenAPI Documents
 
