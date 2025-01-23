@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RouteVersioning.OpenApi.Transformers;
+using System;
 
 public static class Extensions
 {
 	public static IServiceCollection AddVersionedOpenApi<T>(
 		this IServiceCollection services,
 		RouteVersions<T> versions,
+		Action<OpenApiOptions>? configure = null,
 		bool includeUnversionedEndpoints = true
 	)
 		where T : struct
@@ -26,10 +28,12 @@ public static class Extensions
 					includeUnversionedEndpoints
 				));
 
-				foreach (var configure in meta.GetFeatures<ConfigureOpenApiOptionsDelegate>())
+				foreach (var vConfigure in meta.GetFeatures<ConfigureOpenApiOptionsDelegate>())
 				{
-					configure(options);
+					vConfigure(options);
 				}
+
+				configure?.Invoke(options);
 			});
 		}
 		return services;
