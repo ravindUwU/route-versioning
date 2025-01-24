@@ -12,9 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Folder", "Solution
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteVersioning", "RouteVersioning\RouteVersioning.csproj", "{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteVersioning.Sandbox", "RouteVersioning.Sandbox\RouteVersioning.Sandbox.csproj", "{45FEA637-4370-4E24-BCC7-7F33D80CC408}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteVersioning.OpenApi", "RouteVersioning.OpenApi\RouteVersioning.OpenApi.csproj", "{B39A12E4-5A70-4997-BA81-62A0E31488C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sandbox", "Sandbox\Sandbox.csproj", "{DC25260B-E9B1-483A-BAC2-9D527DF97B29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,14 +26,14 @@ Global
 		{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADCBF394-C79D-41CE-83DE-30C8B298FDAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45FEA637-4370-4E24-BCC7-7F33D80CC408}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B39A12E4-5A70-4997-BA81-62A0E31488C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B39A12E4-5A70-4997-BA81-62A0E31488C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B39A12E4-5A70-4997-BA81-62A0E31488C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B39A12E4-5A70-4997-BA81-62A0E31488C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC25260B-E9B1-483A-BAC2-9D527DF97B29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC25260B-E9B1-483A-BAC2-9D527DF97B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC25260B-E9B1-483A-BAC2-9D527DF97B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC25260B-E9B1-483A-BAC2-9D527DF97B29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

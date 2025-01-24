@@ -1,7 +1,8 @@
 # Route Versioning
 
 An attempt at implementing route-based API versioning for ASP.NET Core. This library works by
-exhaustively all corresponding API versions, on startup. Only minimal APIs are currently supported.
+exhaustively mapping all corresponding API versions, on startup. Only minimal APIs are currently
+supported.
 
 > [!WARNING]
 >
