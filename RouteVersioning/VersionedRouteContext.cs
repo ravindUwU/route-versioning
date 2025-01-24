@@ -12,7 +12,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Allows mapping routes associated with the specified <see cref="RouteVersionSet{T}"/>.
 /// </summary>
-public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteVersionSet<T> versions)
+public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteVersionSet<T> set)
 	where T : struct
 {
 	/// <summary>
@@ -33,7 +33,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 
 	private Builder MakeBuilder(T from, T? to)
 	{
-		if (!versions.Contains(from))
+		if (!set.Contains(from))
 		{
 			throw new ArgumentOutOfRangeException(
 				message: $@"Invalid version specified: {from}.",
@@ -42,7 +42,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 			);
 		}
 
-		if (to is not null && !versions.Contains(to.Value))
+		if (to is not null && !set.Contains(to.Value))
 		{
 			throw new ArgumentOutOfRangeException(
 				message: $@"Invalid version specified: {to}.",
@@ -52,7 +52,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 		}
 
 		var builder = new Builder(outer);
-		var ds = new DataSource(versions, builder, from, to);
+		var ds = new DataSource(set, builder, from, to);
 		outer.DataSources.Add(ds);
 		return builder;
 	}
@@ -79,7 +79,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 
 	// The data source yields endpoints collected by the builder, across all applicable API versions.
 	internal class DataSource(
-		RouteVersionSet<T> versions,
+		RouteVersionSet<T> set,
 		Builder builder,
 		T from,
 		T? to
@@ -100,15 +100,15 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 		{
 			var list = new List<Endpoint>();
 
-			foreach (var version in versions)
+			foreach (var version in set)
 			{
-				var meta = versions.GetMetadata(version);
+				var meta = set.GetMetadata(version);
 
 				var versionedGroupCtx = new RouteGroupContext
 				{
 					Prefix = RoutePatternFactory.Combine(
 						outerPrefix,
-						RoutePatternFactory.Parse(versions.GetSlug(version))
+						RoutePatternFactory.Parse(set.GetSlug(version))
 					),
 					ApplicationServices = builder.outer.ServiceProvider,
 					Conventions = [
@@ -122,8 +122,8 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 				};
 
 				var shouldMap =
-					versions.Compare(version, from) >= 0
-					&& (to is null || versions.Compare(version, to.Value) <= 0);
+					set.Compare(version, from) >= 0
+					&& (to is null || set.Compare(version, to.Value) <= 0);
 
 				if (shouldMap)
 				{

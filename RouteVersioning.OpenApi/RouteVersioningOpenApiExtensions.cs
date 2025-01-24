@@ -39,11 +39,11 @@ public static class RouteVersioningOpenApiExtensions
 		{
 			var meta = versions.GetMetadata(version);
 
-			services.AddOpenApi(versions.GetSlug(version), (options) =>
+			services.AddOpenApi(versions.GetNamedSlug(version), (options) =>
 			{
-				options.AddDocumentTransformer(new DocumentInfoTransformer<T>(versions, version));
+				options.AddDocumentTransformer(new DocumentInfoTransformer<T>(meta));
 				options.AddDocumentTransformer(new ExcludeInapplicableOperationsTransformer<T>(
-					version,
+					meta,
 					includeUnversionedEndpoints
 				));
 				options.AddDocumentTransformer(new MarkSunsettedOperationsTransformer());

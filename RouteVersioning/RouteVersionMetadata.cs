@@ -16,12 +16,14 @@ public class RouteVersionMetadata<T> : IRouteVersionMetadata<T>
 	internal readonly IReadOnlyList<Action<EndpointBuilder>> finallyConventions;
 
 	internal RouteVersionMetadata(
+		RouteVersionSet<T> set,
 		T version,
 		IDictionary<Type, IEnumerable<object>> features,
 		IReadOnlyList<Action<EndpointBuilder>> conventions,
 		IReadOnlyList<Action<EndpointBuilder>> finallyConventions
 	)
 	{
+		Set = set;
 		Version = version;
 		this.features = features;
 		this.conventions = conventions;
@@ -29,7 +31,14 @@ public class RouteVersionMetadata<T> : IRouteVersionMetadata<T>
 	}
 
 	/// <summary>
-	/// The associated API version.
+	/// The associated version set.
+	/// </summary>
+	public RouteVersionSet<T> Set { get; }
+
+	IRouteVersionSet<T> IRouteVersionMetadata<T>.Set => Set;
+
+	/// <summary>
+	/// The associated API version within of version set.
 	/// </summary>
 	public T Version { get; }
 

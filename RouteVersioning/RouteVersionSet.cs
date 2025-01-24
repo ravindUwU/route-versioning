@@ -7,23 +7,27 @@ using System.Collections.Generic;
 /// <summary>
 /// Defines all available API versions.
 /// </summary>
-public class RouteVersionSet<T> : IEnumerable<T>
+public class RouteVersionSet<T> : IEnumerable<T>, IRouteVersionSet<T>
 	where T : struct
 {
-	private readonly IDictionary<T, RouteVersionMetadata<T>> versions;
+	private readonly IReadOnlyDictionary<T, RouteVersionMetadata<T>> versions;
 	private readonly Func<T, string> slug;
 	private readonly IComparer<T> comparer;
 
 	internal RouteVersionSet(
-		IDictionary<T, RouteVersionMetadata<T>> versions,
+		string? name,
+		IReadOnlyDictionary<T, RouteVersionMetadata<T>> versions,
 		Func<T, string> slug,
 		IComparer<T> comparer
 	)
 	{
+		Name = name;
 		this.versions = versions;
 		this.slug = slug;
 		this.comparer = comparer;
 	}
+
+	public string? Name { get; }
 
 	/// <summary>
 	/// Retrieve the slug for the specified version.
@@ -31,6 +35,15 @@ public class RouteVersionSet<T> : IEnumerable<T>
 	public string GetSlug(T version)
 	{
 		return slug(version);
+	}
+
+	/// <summary>
+	/// Retrieve the slug that includes the name of the version set (<see cref="Name"/>) if defined,
+	/// for the specified version.
+	/// </summary>
+	public string GetNamedSlug(T version)
+	{
+		return Name is null ? slug(version) : $"{Name}-{slug(version)}";
 	}
 
 	/// <summary>

@@ -42,9 +42,10 @@ public class RouteVersionMetadataBuilder<T>
 		return this;
 	}
 
-	public RouteVersionMetadata<T> Build()
+	public RouteVersionMetadata<T> Build(RouteVersionSet<T> set)
 	{
 		return new RouteVersionMetadata<T>(
+			set,
 			version,
 			features: features.ToDictionary((kv) => kv.Key, (kv) => kv.Value.AsEnumerable()),
 			conventions,

@@ -16,15 +16,15 @@ using System.Threading.Tasks;
 internal class ExcludeInapplicableOperationsTransformer<T> : IOpenApiDocumentTransformer
 	where T : struct
 {
-	private readonly T version;
+	private readonly RouteVersionMetadata<T> meta;
 	private readonly bool includeUnversionedEndpoints;
 
 	public ExcludeInapplicableOperationsTransformer(
-		T version,
+		RouteVersionMetadata<T> meta,
 		bool includeUnversionedEndpoints
 	)
 	{
-		this.version = version;
+		this.meta = meta;
 		this.includeUnversionedEndpoints = includeUnversionedEndpoints;
 	}
 
@@ -40,12 +40,29 @@ internal class ExcludeInapplicableOperationsTransformer<T> : IOpenApiDocumentTra
 			{
 				if (docActions.TryGetAction(op, out var action))
 				{
-					var meta = action.EndpointMetadata.OfType<IRouteVersionMetadata>().SingleOrDefault();
+					var remove = true;
 
-					if (
-						(meta is null && !includeUnversionedEndpoints)
-						|| (meta is not null && !meta.IsVersion(version))
-					)
+					var endpointMetas = action.EndpointMetadata.OfType<IRouteVersionMetadata>().ToList();
+					if (endpointMetas.Count is 0)
+					{
+						remove = !includeUnversionedEndpoints;
+					}
+					else
+					{
+						foreach (var endpointMeta in endpointMetas)
+						{
+							if (
+								endpointMeta.Set == meta.Set
+								&& endpointMeta.IsVersion(meta.Version)
+							)
+							{
+								remove = false;
+								break;
+							}
+						}
+					}
+
+					if (remove)
 					{
 						opKeysToRemove.Add(opKey);
 					}

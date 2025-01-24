@@ -2,13 +2,14 @@ namespace RouteVersioning;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <inheritdoc cref="RouteVersionSet{T}"/>
-public class RouteVersionSetBuilder<T>
+public class RouteVersionSetBuilder<T>(string? name = null)
 	where T : struct
 {
 	private readonly Dictionary<T, RouteVersionMetadataBuilder<T>> versions = [];
+
+	private readonly string? name = name;
 	private Func<T, string> slug = (v) => $"v{v}";
 	private IComparer<T> comparer = Comparer<T>.Default;
 
@@ -100,10 +101,14 @@ public class RouteVersionSetBuilder<T>
 
 	public RouteVersionSet<T> Build()
 	{
-		return new RouteVersionSet<T>(
-			versions.ToDictionary((kv) => kv.Key, (kv) => kv.Value.Build()),
-			slug,
-			comparer
-		);
+		var versions = new Dictionary<T, RouteVersionMetadata<T>>();
+		var set = new RouteVersionSet<T>(name, versions, slug, comparer);
+
+		foreach (var (key, value) in this.versions)
+		{
+			versions[key] = value.Build(set);
+		}
+
+		return set;
 	}
 }

@@ -29,7 +29,7 @@ public class Program
 		app.Run();
 	}
 
-	private static readonly RouteVersionSet<int> versions = new RouteVersionSetBuilder<int>()
+	private static readonly RouteVersionSet<int> api1Versions = new RouteVersionSetBuilder<int>("api1")
 		.Version(1, (v) => v
 			.Sunset(
 				at: DateTime.Now.AddMonths(-1),
@@ -55,6 +55,12 @@ public class Program
 		.Version(3)
 		.Build();
 
+	private static readonly RouteVersionSet<int> api2Versions = new RouteVersionSetBuilder<int>("api2")
+		.Version(1)
+		.Version(2)
+		.Version(3)
+		.Build();
+
 	private static void ConfigureServices(WebApplicationBuilder app)
 	{
 		var services = app.Services;
@@ -65,7 +71,13 @@ public class Program
 		);
 
 		services.AddVersionedOpenApi(
-			versions,
+			api1Versions,
+			(options) => options.AddDocumentTransformer(new ClearServers()),
+			includeUnversionedEndpoints: false
+		);
+
+		services.AddVersionedOpenApi(
+			api2Versions,
 			(options) => options.AddDocumentTransformer(new ClearServers()),
 			includeUnversionedEndpoints: false
 		);
@@ -75,19 +87,31 @@ public class Program
 	{
 		app.MapGet("uwu", () => "UwU");
 
-		var api = app.MapGroup("api").WithVersions(versions);
+		Func<string> handleA = () => "a";
+		Func<string> handleB = () => "b";
+		Func<string> handleC = () => "c";
 
-		api.From(1).MapGet("a", () => "a").AddEndpointFilter<FilterAEndpoint>();
-		api.From(2).MapGet("b", () => "b");
-		api.From(3).MapGet("c", () => "c");
+		var api1 = app.MapGroup("api1").WithVersions(api1Versions);
+		{
+			api1.From(1).MapGet("a", handleA).AddEndpointFilter<FilterAEndpoint>();
+			api1.From(2).MapGet("b", handleB);
+			api1.From(3).MapGet("c", handleC);
 
-		api.Between(1, 2).MapGet("d", () => "d");
+			api1.Between(1, 2).MapGet("d", () => "d");
 
-		api.Between(1, 2).MapGet("e", () => "e");
-		api.From(3).MapGet("e", () => "e");
+			api1.Between(1, 2).MapGet("e", () => "e");
+			api1.From(3).MapGet("e", () => "e");
 
-		api.Between(1, 2).MapGet("owo", () => "owo");
-		api.From(3).MapGet("owo", () => "OwO");
+			api1.Between(1, 2).MapGet("owo", () => "owo");
+			api1.From(3).MapGet("owo", () => "OwO");
+		}
+
+		var api2 = app.MapGroup("api2").WithVersions(api2Versions);
+		{
+			api2.From(1).MapGet("a", handleA);
+			api2.From(2).MapGet("b", handleB);
+			api2.From(3).MapGet("c", handleC);
+		}
 
 		// openapi/current.json
 		// openapi/v{1,2,3}.json
@@ -105,7 +129,8 @@ public class Program
 		app.MapGet("swagger", () =>
 		{
 			var urls = new[] { "current" }
-				.Concat(versions.Select(versions.GetSlug))
+				.Concat(api1Versions.Select(api1Versions.GetNamedSlug))
+				.Concat(api2Versions.Select(api2Versions.GetNamedSlug))
 				.Select((name) => new { name, url = $"/openapi/{name}.json" });
 
 			return Results.Content(contentType: "text/html", content: $$"""
