@@ -58,7 +58,10 @@ public class Program
 	{
 		var services = app.Services;
 
-		services.AddOpenApi("current", (options) => options.AddDocumentTransformer(new ClearServers()));
+		services.AddOpenApi("current", (options) => options
+			.AddDocumentTransformer(new ClearServers())
+			.MarkSunsettedOperations()
+		);
 
 		services.AddVersionedOpenApi(
 			versions,

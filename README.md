@@ -106,6 +106,23 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
      	.Build();
   ```
 
+  ```http
+  HTTP/1.1 200 OK
+  Sunset: Tue, 24 Dec 2024 12:41:24 GMT
+  Link: <https://example.com/changelog/v2-migration>; rel="sunset"; type="text/html"
+  ```
+
+- Operations of retired API versions will be marked deprecated in the version-specific OpenAPI
+  documents added using `AddVersionedOpenApi`.
+
+  To do the same in other OpenAPI documents, use `MarkSunsettedOperations()`.
+
+  ```csharp
+  services.AddOpenApi("current", (options) => options
+  	.MarkSunsettedOperations()
+  );
+  ```
+
 ### Adding Endpoint Conventions
 
 - To add a convention that applies to _a specific endpoint across a range of API versions_ (`v*/a`),
@@ -146,7 +163,9 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
   To exclude versioned operations from this document, use `ExcludeVersionedOperations()`.
 
   ```csharp
-  services.AddOpenApi("current", (options) => options.ExcludeVersionedOperations());
+  services.AddOpenApi("current", (options) => options
+  	.ExcludeVersionedOperations()
+  );
   ```
 
 - Use `AddVersionedOpenApi` to add version-specific OpenAPI documents using `AddVersionedOpenApi`.

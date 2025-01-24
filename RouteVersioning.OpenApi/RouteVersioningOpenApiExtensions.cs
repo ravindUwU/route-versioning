@@ -46,6 +46,7 @@ public static class RouteVersioningOpenApiExtensions
 					version,
 					includeUnversionedEndpoints
 				));
+				options.AddDocumentTransformer(new MarkSunsettedOperationsTransformer());
 
 				foreach (var vConfigure in meta.GetFeatures<ConfigureOpenApiOptionsDelegate>())
 				{
@@ -93,5 +94,13 @@ public static class RouteVersioningOpenApiExtensions
 	public static OpenApiOptions ExcludeVersionedOperations(this OpenApiOptions options)
 	{
 		return options.AddDocumentTransformer(new ExcludeVersionedOperationsTransformer());
+	}
+
+	/// <summary>
+	/// Marks operations of endpoints associated with retired API versions, as deprecated.
+	/// </summary>
+	public static OpenApiOptions MarkSunsettedOperations(this OpenApiOptions options)
+	{
+		return options.AddDocumentTransformer(new MarkSunsettedOperationsTransformer());
 	}
 }
