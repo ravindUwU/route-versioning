@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RouteVersioning.OpenApi;
 using Scalar.AspNetCore;
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -29,6 +30,11 @@ public class Program
 
 	private static readonly RouteVersionSet<int> versions = new RouteVersionSetBuilder<int>()
 		.Version(1, (v) => v
+			.Sunset(
+				at: DateTime.Now.AddMonths(-1),
+				link: "https://www.example.com",
+				linkMediaType: "text/html"
+			)
 			.ConfigureOpenApiInfo((i) =>
 			{
 				i.Description = "v1 Description!!!";
@@ -38,7 +44,13 @@ public class Program
 			)
 			.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
 		)
-		.Version(2)
+		.Version(2, (v) => v
+			.Sunset(
+				at: DateTime.Now.AddMonths(1),
+				link: "https://www.example.com",
+				linkMediaType: "text/html"
+			)
+		)
 		.Version(3)
 		.Build();
 

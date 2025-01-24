@@ -10,12 +10,12 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
 >
 > - [x] Minimal APIs
 > - [x] OpenAPI
-> - [ ] Version deprecation ([`Sunset` header](https://datatracker.ietf.org/doc/html/rfc8594)).
-> - [ ] Controllers, if possible?
+> - [x] Sunset header
 > - [ ] Project structure?
-> - [ ] Target lower .NET versions.
-> - [ ] NuGet package
 > - [ ] Tests
+> - [ ] Controllers, if possible?
+> - [ ] Target lower .NET versions?
+> - [ ] NuGet package
 
 > [!TIP]
 >
@@ -87,6 +87,24 @@ exhaustively all corresponding API versions, on startup. Only minimal APIs are c
      // api/v3/e (revised)
      api.From(3).MapGet("e", () => ...);
      ```
+
+### Retiring an API Version
+
+- Use `Sunset` to indicate an API version being retired, which adds the specified details as
+  `Sunset` and `Link` headers as described in
+  [RFC 8594](https://datatracker.ietf.org/doc/html/rfc8594), to its responses.
+
+  ```csharp
+  var versions = new RouteVersionSetBuilder<int>()
+  	.Version(1, (v) => v
+  			.Sunset(
+  				at: someDateTime,
+  				link: "https://example.com/changelog/v2-migration",
+  				linkMediaType: "text/html"
+  			)
+    	)
+     	.Build();
+  ```
 
 ### Adding Endpoint Conventions
 
