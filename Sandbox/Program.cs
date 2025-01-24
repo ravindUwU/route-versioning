@@ -2,10 +2,8 @@ namespace Sandbox;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using RouteVersioning;
 using RouteVersioning.OpenApi;
@@ -40,10 +38,7 @@ public class Program
 			{
 				i.Description = "v1 Description!!!";
 			})
-			.ConfigureOpenApiOptions((options) => options
-				.AddDocumentTransformer<V1DocumentTransformer>()
-			)
-			.AddEndpointFilter<IEndpointConventionBuilder, FilterV1Endpoints>()
+			.AddEndpointFilter(new LoggingFilter("v1"))
 		)
 		.Version(2, (v) => v
 			.Sunset(
@@ -58,7 +53,6 @@ public class Program
 	private static readonly RouteVersionSet<int> api2Versions = new RouteVersionSetBuilder<int>("api2")
 		.Version(1)
 		.Version(2)
-		.Version(3)
 		.Build();
 
 	private static void ConfigureServices(WebApplicationBuilder app)
@@ -87,38 +81,28 @@ public class Program
 	{
 		app.MapGet("uwu", () => "UwU");
 
-		Func<string> handleA = () => "a";
-		Func<string> handleB = () => "b";
-		Func<string> handleC = () => "c";
-
 		var api1 = app.MapGroup("api1").WithVersions(api1Versions);
 		{
-			api1.From(1).MapGet("a", handleA).AddEndpointFilter<FilterAEndpoint>();
-			api1.From(2).MapGet("b", handleB);
-			api1.From(3).MapGet("c", handleC);
+			api1.From(1).MapGet("a", () => "a 1-").AddEndpointFilter(new LoggingFilter("a"));
+			api1.From(2).MapGet("b", () => "b 2-");
+			api1.From(3).MapGet("c", () => "c 3-");
 
-			api1.Between(1, 2).MapGet("d", () => "d");
+			api1.Between(1, 2).MapGet("d", () => "d 1-2");
 
-			api1.Between(1, 2).MapGet("e", () => "e");
-			api1.From(3).MapGet("e", () => "e");
-
-			api1.Between(1, 2).MapGet("owo", () => "owo");
-			api1.From(3).MapGet("owo", () => "OwO");
+			api1.Between(1, 2).MapGet("e", () => "e 1-2");
+			api1.From(3).MapGet("e", () => "e 3-");
 		}
 
 		var api2 = app.MapGroup("api2").WithVersions(api2Versions);
 		{
-			api2.From(1).MapGet("a", handleA);
-			api2.From(2).MapGet("b", handleB);
-			api2.From(3).MapGet("c", handleC);
+			api2.From(1).MapGet("a", () => "a 1-").AddEndpointFilter(new LoggingFilter("a"));
+			api2.From(2).MapGet("b", () => "b 2-");
 		}
 
-		// openapi/current.json
-		// openapi/v{1,2,3}.json
+		// openapi/*.json
 		app.MapOpenApi();
 
-		// scalar/current
-		// scalar/v{1,2,3}
+		// scalar/*
 		app.MapScalarApiReference((options) => options
 			.WithDefaultOpenAllTags(true)
 			.WithDefaultFonts(false)
@@ -154,6 +138,7 @@ public class Program
 								SwaggerUIStandalonePreset,
 							],
 							layout: 'StandaloneLayout',
+							operationsSorter: 'alpha',
 						});
 					</script>
 				</body>
@@ -161,53 +146,6 @@ public class Program
 				"""
 			);
 		});
-	}
-
-	private class FilterAEndpoint(ILogger<FilterAEndpoint> logger) : IEndpointFilter
-	{
-		public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext ctx, EndpointFilterDelegate next)
-		{
-			var req = ctx.HttpContext.Request;
-			var label = $"{req.Method} {req.GetEncodedPathAndQuery()}";
-			try
-			{
-				logger.LogInformation("Started: {label}", label);
-				return await next(ctx);
-			}
-			finally
-			{
-				logger.LogInformation("Finished: {label}", label);
-			}
-		}
-	}
-
-	private class FilterV1Endpoints(ILogger<FilterV1Endpoints> logger) : IEndpointFilter
-	{
-		public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext ctx, EndpointFilterDelegate next)
-		{
-			var req = ctx.HttpContext.Request;
-			var label = $"{req.Method} {req.GetEncodedPathAndQuery()}";
-			try
-			{
-				logger.LogInformation("Started: {label}", label);
-				return await next(ctx);
-			}
-			finally
-			{
-				logger.LogInformation("Finished: {label}", label);
-			}
-		}
-	}
-
-	private class V1DocumentTransformer(
-		ILogger<V1DocumentTransformer> logger
-	) : IOpenApiDocumentTransformer
-	{
-		public Task TransformAsync(OpenApiDocument doc, OpenApiDocumentTransformerContext ctx, CancellationToken ct)
-		{
-			logger.LogInformation("Transformed!!");
-			return Task.CompletedTask;
-		}
 	}
 
 	private class ClearServers : IOpenApiDocumentTransformer

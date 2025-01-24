@@ -12,7 +12,6 @@ supported.
 > - [x] Minimal APIs
 > - [x] OpenAPI
 > - [x] Sunset header
-> - [ ] Project structure?
 > - [ ] Tests
 > - [ ] Controllers, if possible?
 > - [ ] Target lower .NET versions?
@@ -27,8 +26,9 @@ supported.
 >
 > Comparatively, this library,
 >
-> - Uses a different, simpler approach to mapping API versions.
 > - Offers just one API versioning scheme (route-based).
+> - Maps all versions at startup, instead of (as I understand) resolving API versions as requests
+>   come through.
 > - Uses API version _ranges_ (i.e., vX-onward/between vX & Y inclusive) by default.
 
 ## Usage
@@ -88,41 +88,6 @@ supported.
      // api/v3/e (revised)
      api.From(3).MapGet("e", () => ...);
      ```
-
-### Retiring an API Version
-
-- Use `Sunset` to indicate an API version being retired, which adds the specified details as
-  `Sunset` and `Link` headers as described in
-  [RFC 8594](https://datatracker.ietf.org/doc/html/rfc8594), to its responses.
-
-  ```csharp
-  var versions = new RouteVersionSetBuilder<int>()
-  	.Version(1, (v) => v
-  			.Sunset(
-  				at: someDateTime,
-  				link: "https://example.com/changelog/v2-migration",
-  				linkMediaType: "text/html"
-  			)
-    	)
-     	.Build();
-  ```
-
-  ```http
-  HTTP/1.1 200 OK
-  Sunset: Tue, 24 Dec 2024 12:41:24 GMT
-  Link: <https://example.com/changelog/v2-migration>; rel="sunset"; type="text/html"
-  ```
-
-- Operations of retired API versions will be marked deprecated in the version-specific OpenAPI
-  documents added using `AddVersionedOpenApi`.
-
-  To do the same in other OpenAPI documents, use `MarkSunsettedOperations()`.
-
-  ```csharp
-  services.AddOpenApi("current", (options) => options
-  	.MarkSunsettedOperations()
-  );
-  ```
 
 ### Adding Endpoint Conventions
 
@@ -244,4 +209,39 @@ supported.
   })
   ```
 
-  ![](./img/swagger.png)
+  <img src="./img/swagger.png" height="230">
+
+### Retiring an API Version
+
+- Use `Sunset` to indicate an API version being retired, which adds the specified details as
+  `Sunset` and `Link` headers as described in
+  [RFC 8594](https://datatracker.ietf.org/doc/html/rfc8594), to its responses.
+
+  ```csharp
+  var versions = new RouteVersionSetBuilder<int>()
+  	.Version(1, (v) => v
+  			.Sunset(
+  				at: someDateTime,
+  				link: "https://example.com/changelog/v2-migration",
+  				linkMediaType: "text/html"
+  			)
+    	)
+     	.Build();
+  ```
+
+  ```http
+  HTTP/1.1 200 OK
+  Sunset: Tue, 24 Dec 2024 12:41:24 GMT
+  Link: <https://example.com/changelog/v2-migration>; rel="sunset"; type="text/html"
+  ```
+
+- Operations of retired API versions will be marked deprecated in
+  [version-specific OpenAPI documents](#generating-openapi-documents).
+
+  To do the same in other OpenAPI documents, use `MarkSunsettedOperations()`.
+
+  ```csharp
+  services.AddOpenApi("current", (options) => options
+  	.MarkSunsettedOperations()
+  );
+  ```
