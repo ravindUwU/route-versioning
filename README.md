@@ -107,13 +107,13 @@ corresponding API versions, on startup. Only minimal APIs are currently supporte
   ```csharp
   var versions = new RouteVersionSetBuilder<int>()
   	.Version(1, (v) => v
-  			.Sunset(
-  				at: someDateTime,
-  				link: "https://example.com/changelog/v2-migration",
-  				linkMediaType: "text/html"
-  			)
-    	)
-     	.Build();
+  		.Sunset(
+  			at: someDateTime,
+  			link: "https://example.com/changelog/v2-migration",
+  			linkMediaType: "text/html"
+  		)
+  	)
+  	.Build();
   ```
 
   ```http
