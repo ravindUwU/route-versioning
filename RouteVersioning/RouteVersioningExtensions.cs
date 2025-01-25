@@ -24,6 +24,26 @@ public static class RouteVersioningExtensions
 	/// <param name="at">
 	/// The instant at which point onward, the endpoints are considered retired.
 	/// </param>
+	public static RouteVersionMetadataBuilder<T> Sunset<T>(
+		this RouteVersionMetadataBuilder<T> builder,
+		DateTime at
+	)
+		where T : struct
+	{
+		return builder.Sunset(
+			at,
+			null as Func<HttpContext, string>,
+			null
+		);
+	}
+
+	/// <summary>
+	/// Indicate that a specific API version is, or will be retired; prior to possibly being
+	/// completely removed.
+	/// </summary>
+	/// <param name="at">
+	/// The instant at which point onward, the endpoints are considered retired.
+	/// </param>
 	/// <param name="link">
 	/// URL to a resource that includes details about the API retirement.
 	/// </param>
