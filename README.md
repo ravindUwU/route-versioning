@@ -12,7 +12,7 @@ supported.
 > - [x] Minimal APIs
 > - [x] OpenAPI
 > - [x] Sunset header
-> - [ ] Tests
+> - [x] Tests
 > - [ ] Controllers, if possible?
 > - [ ] Target lower .NET versions?
 > - [ ] NuGet package

@@ -13,8 +13,8 @@ public static class RouteVersioningOpenApiExtensions
 	/// each version-specific document,
 	/// <list type="bullet">
 	/// <item>Corresponding to a single API version.</item>
-	/// <item>Named using the version slug.</item>
-	/// <item>Containing the subset of operations that correspond to its version.</item>
+	/// <item>Named using the version slug <see cref="RouteVersionSet{T}.GetNamedSlug"/>.</item>
+	/// <item>Containing the subset of operations that correspond to the same version.</item>
 	/// <item>Excluding operations of endpoints of other versions.</item>
 	/// </list>
 	/// </summary>
