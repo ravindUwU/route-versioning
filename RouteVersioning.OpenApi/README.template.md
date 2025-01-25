@@ -1,6 +1,6 @@
 # RouteVersioning.OpenApi
 
-Versioned OpenAPI document generation for RouteVersioning.
+Versioned OpenAPI document generation for [RouteVersioning](https://www.nuget.org/packages/RouteVersioning).
 
 ## Usage
 
