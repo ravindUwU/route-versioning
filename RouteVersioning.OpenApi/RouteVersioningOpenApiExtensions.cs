@@ -59,19 +59,19 @@ public static class RouteVersioningOpenApiExtensions
 		return services;
 	}
 
+	internal delegate void ConfigureOpenApiOptionsDelegate(OpenApiOptions options);
+
 	/// <summary>
 	/// Configure <see cref="OpenApiOptions"/> for a <em>specific API version</em>.
 	/// </summary>
 	public static RouteVersionMetadataBuilder<T> ConfigureOpenApiOptions<T>(
 		this RouteVersionMetadataBuilder<T> builder,
-		ConfigureOpenApiOptionsDelegate configure
+		Action<OpenApiOptions> configure
 	)
 		where T : struct
 	{
-		return builder.WithFeature(configure);
+		return builder.WithFeature<ConfigureOpenApiOptionsDelegate>((o) => configure(o));
 	}
-
-	public delegate void ConfigureOpenApiOptionsDelegate(OpenApiOptions options);
 
 	/// <summary>
 	/// Configure the <see cref="OpenApiDocument.Info"/> of the OpenAPI document of a <em>specific
@@ -79,14 +79,12 @@ public static class RouteVersioningOpenApiExtensions
 	/// </summary>
 	public static RouteVersionMetadataBuilder<T> ConfigureOpenApiInfo<T>(
 		this RouteVersionMetadataBuilder<T> builder,
-		ConfigureOpenApiInfoDelegate configure
+		Action<OpenApiInfo> configure
 	)
 		where T : struct
 	{
-		return builder.WithFeature(configure);
+		return builder.WithFeature<DocumentInfoTransformer<T>.ConfigureInfoDelegate>((i) => configure(i));
 	}
-
-	public delegate void ConfigureOpenApiInfoDelegate(OpenApiInfo info);
 
 	/// <summary>
 	/// Excludes endpoints that are associated with any API version, from the OpenAPI document.

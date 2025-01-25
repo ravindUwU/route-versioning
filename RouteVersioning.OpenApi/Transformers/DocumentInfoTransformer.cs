@@ -22,11 +22,13 @@ internal class DocumentInfoTransformer<T>(RouteVersionMetadata<T> meta)
 		info.Version = meta.Set.GetSlug(meta.Version);
 
 		// Run config delegates.
-		foreach (var configure in meta.GetFeatures<RouteVersioningOpenApiExtensions.ConfigureOpenApiInfoDelegate>())
+		foreach (var configure in meta.GetFeatures<ConfigureInfoDelegate>())
 		{
 			configure(info);
 		}
 
 		return Task.CompletedTask;
 	}
+
+	internal delegate void ConfigureInfoDelegate(OpenApiInfo info);
 }
