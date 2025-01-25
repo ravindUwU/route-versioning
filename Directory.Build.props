@@ -6,4 +6,21 @@
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<Authors>Ravindu Liyanapathirana</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/ravindUwU/route-versioning</PackageProjectUrl>
+
+		<!-- https://learn.microsoft.com/en-au/nuget/concepts/package-versioning -->
+		<Version>1.0.0-alpha.1</Version>
+
+		<!--
+			Generate symbol package for Source Link
+			https://github.com/dotnet/sourcelink
+			https://learn.microsoft.com/en-au/nuget/create-packages/symbol-packages-snupkg
+		-->
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
 </Project>

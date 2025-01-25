@@ -1,5 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<Description>OpenAPI document generation for RouteVersioning.</Description>
+		<PackageTags>aspnetcore minimal api versioning openapi</PackageTags>
+		<RepositoryUrl>https://github.com/ravindUwU/route-versioning/tree/main/RouteVersioning.OpenApi</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Visible="false" Pack="true" PackagePath="README.md" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
@@ -13,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="RouteVersioning.OpenApi.Tests"/>
+		<InternalsVisibleTo Include="RouteVersioning.OpenApi.Tests" />
 	</ItemGroup>
 
 </Project>

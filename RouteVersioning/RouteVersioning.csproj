@@ -1,5 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<Description>Route-based versioning for ASP.NET Core minimal APIs.</Description>
+		<PackageTags>aspnetcore minimal api versioning</PackageTags>
+		<RepositoryUrl>https://github.com/ravindUwU/route-versioning/tree/main/RouteVersioning</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Visible="false" Pack="true" PackagePath="README.md" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
