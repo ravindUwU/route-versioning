@@ -4,6 +4,9 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+		<!-- Don't warnings for XML docs unavailable on publicly visible types/members/parameters.-->
+		<NoWarn>$(NoWarn);1591;1573</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup>

@@ -5,6 +5,7 @@
 		<PackageTags>aspnetcore minimal api versioning</PackageTags>
 		<RepositoryUrl>https://github.com/ravindUwU/route-versioning/tree/main/RouteVersioning</RepositoryUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>

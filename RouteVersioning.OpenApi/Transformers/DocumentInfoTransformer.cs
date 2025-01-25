@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 /// <summary>
 /// <list type="bullet">
 /// <item>Sets <see cref="OpenApiInfo.Version"/> to the version slug.</item>
-/// <item>Runs configuration delegates added via <see cref="Extensions.ConfigureOpenApiInfo{T}"/>.</item>
+/// <item>Runs configuration delegates added via
+/// <see cref="RouteVersioningOpenApiExtensions.ConfigureOpenApiInfo{T}"/>.</item>
 /// </list>
 /// </summary>
 internal class DocumentInfoTransformer<T>(RouteVersionMetadata<T> meta)
