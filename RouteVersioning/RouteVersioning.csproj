@@ -1,8 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
+
 	<ItemGroup>
-		<InternalsVisibleTo Include="RouteVersioning.Tests"/>
+		<InternalsVisibleTo Include="RouteVersioning.Tests" />
 	</ItemGroup>
+
 </Project>

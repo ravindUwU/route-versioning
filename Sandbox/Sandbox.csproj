@@ -1,9 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+
 	<ItemGroup>
 		<PackageReference Include="Scalar.AspNetCore" Version="2.0.4" />
 	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\RouteVersioning.OpenApi\RouteVersioning.OpenApi.csproj" />
 		<ProjectReference Include="..\RouteVersioning\RouteVersioning.csproj" />
 	</ItemGroup>
+
 </Project>
