@@ -1,9 +1,13 @@
 # RouteVersioning
 
-<!-- include: ../README.md intro -->
+<!-- pack-include: ../README.md intro -->
 
 ## Usage
 
-<!-- include: ../README.md usage-mapping -->
-<!-- include: ../README.md usage-retiring -->
-<!-- include: ../README.md usage-conventions -->
+<!-- pack-include: ../README.md usage-mapping -->
+<!-- pack-include: ../README.md usage-retiring -->
+<!-- pack-include: ../README.md usage-conventions -->
+
+## Alternatives
+
+<!-- pack-include: ../README.md alternatives -->

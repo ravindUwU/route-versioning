@@ -5,32 +5,28 @@
 Route-based API versioning for ASP.NET Core. This library works by exhaustively mapping all
 corresponding API versions, on startup. Only minimal APIs are currently supported.
 
+The following packages are available,
+
+- `RouteVersioning`
+  [![](https://img.shields.io/nuget/v/RouteVersioning)](https://www.nuget.org/packages/RouteVersioning)
+- `RouteVersioning.OpenApi`
+  [![](https://img.shields.io/nuget/v/RouteVersioning.OpenApi)](https://www.nuget.org/packages/RouteVersioning.OpenApi)
+
+<br>
+
+<!-- pack-replace: [!WARNING] with: **⚠️ Warning** -->
+
 > [!WARNING]
 >
-> **Still a work in progress!!** The examples below will likely change as I finalise its APIs. My
-> to-do list is:
+> **This project is a work in progress!!** The examples below will likely change as I finalise its
+> APIs. My to-do list is:
 >
 > - [x] Minimal APIs
 > - [x] OpenAPI
 > - [x] Sunset header
 > - [x] Tests
+> - [x] NuGet package
 > - [ ] Controllers, if possible?
-> - [ ] Target lower .NET versions?
-> - [ ] NuGet package
-
-> [!TIP]
->
-> If you're looking for a library that supports other versioning schemes (query parameters, request
-> headers, content negotiation, etc.), consider
-> [`Asp.Versioning`](https://github.com/dotnet/aspnet-api-versioning) which is more versatile, and
-> should be capable of everything that this library offers with some configuration.
->
-> Comparatively, this library,
->
-> - Offers just one API versioning scheme (route-based).
-> - Maps all versions at startup, instead of (as I understand) resolving API versions as requests
->   come through.
-> - Uses API version _ranges_ (i.e., vX-onward/between vX & Y inclusive) by default.
 
 <!-- #endregion -->
 
@@ -175,9 +171,8 @@ corresponding API versions, on startup. Only minimal APIs are currently supporte
   );
   ```
 
-- Use `AddVersionedOpenApi` to add version-specific OpenAPI documents using `AddVersionedOpenApi`.
-  To exclude unversioned endpoints from these documents, specify
-  `includeUnversionedEndpoints: false`.
+- Use `AddVersionedOpenApi` to add version-specific OpenAPI documents. To exclude unversioned
+  endpoints from these documents, specify `includeUnversionedEndpoints: false`.
 
   ```csharp
   services.AddVersionedOpenApi(versions, includeUnversionedEndpoints: false);
@@ -266,5 +261,21 @@ corresponding API versions, on startup. Only minimal APIs are currently supporte
   <!-- pack-img: https://raw.githubusercontent.com/ravindUwU/route-versioning/{hash}/img/swagger.png -->
 
   ![](./img/swagger.png)
+
+<!-- #endregion -->
+
+## Alternatives
+
+<!-- #region alternatives -->
+
+If you're after a library that supports versioning using query parameters, request headers, content
+negotiation, etc., consider [`Asp.Versioning`](https://github.com/dotnet/aspnet-api-versioning)
+which should be capable of everything that this library offers, with some configuration.
+Comparatively, this one,
+
+- Offers just one API versioning scheme (route-based).
+- Maps all versions at startup, instead of resolving API versions as requests are made (as I
+  understand).
+- Uses API version _ranges_ (i.e., vX-onward/between vX & Y inclusive) by default.
 
 <!-- #endregion -->

@@ -4,15 +4,19 @@
 	the extension *.md.
 
 .DESCRIPTION
-	Supports a few directives that must be present on their own lines:
+	Supports a few simple text transformation directives that must be present on their own lines:
 
-		<!-- include: file.md section-name -->
+		<!-- pack-include: file.md section-name -->
 			Includes a named section from a different markdown file in which the section must be
 			delimited between <!-- #region section-name --> and <!-- #endregion --> lines.
 
 		<!-- pack-img: url -->
-			Searches for the subsequent markdown image ![...](...), and replaces its URL with the
-			specified URL.
+			Searches for the markdown image ![...](...) that immediately follows, and replaces its
+			URL with the specified URL.
+
+		<!-- pack-replace: search-string with: replacement-string -->
+			Searches for the subsequent line that includes the search string, and substitutes
+			occurences with the replacement string.
 #>
 [CmdletBinding()]
 param (
@@ -21,6 +25,7 @@ param (
 	[ValidateScript({ $_.EndsWith('.template.md') })]
 	[string] $Template,
 
+	[Parameter()]
 	[switch] $Preview
 )
 
@@ -40,7 +45,7 @@ function main {
 			$line = $_
 			$trimmedLine = $line.Trim()
 
-			if ($trimmedLine -match '<!\-\- include: (?<file>[\w\./\/]+) (?<section>[\w\-]+) \-\->') {
+			if ($trimmedLine -match '<!-- pack-include: (?<file>[\w\./\/]+) (?<section>[\w\-]+) -->') {
 				include $Matches.file $Matches.section
 			} else {
 				$line
@@ -67,6 +72,7 @@ function include {
 		Before
 		Within
 		WithinPackImg
+		WithinPackReplace
 		After
 	}
 
@@ -89,6 +95,12 @@ function include {
 				if ($trimmedLine -match '<!-- pack-img: (?<packImg>.+) -->') {
 					$stateArg = $Matches.packImg
 					$state = 'WithinPackImg'
+				} elseif ($trimmedLine -match '<!-- pack-replace: (?<search>.+) with: (?<replacement>.+) -->') {
+					$stateArg = @{
+						Search = $Matches.search
+						Replacement = $Matches.replacement
+					}
+					$state = 'WithinPackReplace'
 				} elseif ($trimmedLine -eq '<!-- #endregion -->') {
 					$state = 'After'
 				} else {
@@ -103,6 +115,14 @@ function include {
 						$stateArg = "$stateArg" -replace '{hash}', (git rev-parse HEAD)
 					}
 					"$($Matches.leadingWhitespace)![$($Matches.alt)]($stateArg)"
+					$state = 'Within'
+				}
+				break
+			}
+
+			'WithinPackReplace' {
+				if ($line.Contains($stateArg.Search)) {
+					$line.Replace($stateArg.Search, $stateArg.Replacement)
 					$state = 'Within'
 				}
 				break
