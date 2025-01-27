@@ -89,14 +89,14 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 		// Used when versions are mapped via a route builder.
 		// i.e., app.WithVersions(...).*
 		public override IReadOnlyList<Endpoint> Endpoints
-			=> GetEndpoints(outerPrefix: null);
+			=> GetEndpoints(groupCtx: null);
 
 		// Used when versions are mapped via a route group builder.
 		// i.e., app.MapGroup(...).WithVersions(...).*
 		public override IReadOnlyList<Endpoint> GetGroupedEndpoints(RouteGroupContext groupCtx)
-			=> GetEndpoints(outerPrefix: groupCtx.Prefix);
+			=> GetEndpoints(groupCtx);
 
-		private List<Endpoint> GetEndpoints(RoutePattern? outerPrefix)
+		private List<Endpoint> GetEndpoints(RouteGroupContext? groupCtx)
 		{
 			var list = new List<Endpoint>();
 
@@ -107,7 +107,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 				var versionedGroupCtx = new RouteGroupContext
 				{
 					Prefix = RoutePatternFactory.Combine(
-						outerPrefix,
+						groupCtx?.Prefix,
 						RoutePatternFactory.Parse(set.GetSlug(version))
 					),
 					ApplicationServices = builder.outer.ServiceProvider,
@@ -115,10 +115,19 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 						// Add convention to add route version metadata to the endpoint.
 						(b) => b.Metadata.Add(meta),
 
+						// Group conventions.
+						.. groupCtx?.Conventions ?? [],
+
 						// Add version-specific conventions.
 						.. meta.conventions,
 					],
-					FinallyConventions = meta.finallyConventions,
+					FinallyConventions = [
+						// Group conventions.
+						.. groupCtx?.FinallyConventions ?? [],
+
+						// Add version-specific conventions.
+						.. meta.finallyConventions,
+					],
 				};
 
 				var shouldMap =

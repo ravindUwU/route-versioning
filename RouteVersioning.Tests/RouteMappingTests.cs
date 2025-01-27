@@ -150,6 +150,25 @@ public class RouteMappingTests
 			Assert.Equal(HttpStatusCode.NotFound, await app.GetStatusCodeAsync("v3/g3/a"));
 			Assert.Equal(HttpStatusCode.NotFound, await app.GetStatusCodeAsync("v3/g3/b"));
 		}
+
+		[Fact]
+		public async Task Forwards_group_conventions()
+		{
+			var id = $"{Guid.NewGuid()}";
+			var set = new RouteVersionSetBuilder<int>().Version(1).Build();
+
+			var app = await TestApp.StartAsync(configureApp: (app) =>
+			{
+				var group = app.MapGroup("g")
+					.AddEndpointFilter(new AddHeaderFilter("X-Id", id));
+
+				var v = group.WithVersions(set);
+
+				v.From(1).MapGet("a", () => { });
+			});
+
+			Assert.Equal(id, await app.GetSingleHeaderAsync("g/v1/a", "X-Id"));
+		}
 	}
 
 	public class ConventionTests
