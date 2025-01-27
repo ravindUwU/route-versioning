@@ -5,10 +5,18 @@
 
 .PARAMETER IgnoreUncommittedChanges
 	If true, continues packing despite uncommitted changes present in the repository.
+
+.PARAMETER Step
+	Run a single step of the packing process.
 #>
 [CmdletBinding()]
 param (
-	[switch] $IgnoreUncommittedChanges = $false
+	[Parameter()]
+	[switch] $IgnoreUncommittedChanges = $false,
+
+	[Parameter()]
+	[ValidateSet('Pack', 'ProcessReadme')]
+	[string] $Step
 )
 
 $projects = @(
@@ -40,14 +48,19 @@ try {
 			Push-Location .
 			Set-Location $project
 
-			Write-Host "Generating $project README" -ForegroundColor Cyan
-			& "$PSScriptRoot/Process-ReadmeTemplate.ps1" 'README.template.md'
+			if (($Step -eq '') -or ($Step -eq 'ProcessReadme')) {
+				Write-Host "Processing $project README" -ForegroundColor Cyan
 
-			Write-Host "Packing $project" -ForegroundColor Cyan
-			Remove-Item 'bin' -Recurse -Force -ErrorAction Ignore
-			Remove-Item 'obj' -Recurse -Force -ErrorAction Ignore
+				& "$PSScriptRoot/Process-ReadmeTemplate.ps1" 'README.template.md'
+			}
 
-			dotnet pack --output '../publish' --verbosity detailed
+			if (($Step -eq '') -or ($Step -eq 'Pack')) {
+				Write-Host "Packing $project" -ForegroundColor Cyan
+
+				Remove-Item 'bin' -Recurse -Force -ErrorAction Ignore
+				Remove-Item 'obj' -Recurse -Force -ErrorAction Ignore
+				dotnet pack --output '../publish' --verbosity detailed
+			}
 		}
 		finally {
 			Pop-Location
