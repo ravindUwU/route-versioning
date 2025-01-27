@@ -15,7 +15,7 @@
 		<PackageProjectUrl>https://github.com/ravindUwU/route-versioning</PackageProjectUrl>
 
 		<!-- https://learn.microsoft.com/en-au/nuget/concepts/package-versioning -->
-		<Version>1.0.0-alpha.2</Version>
+		<Version>1.0.0-alpha.3</Version>
 
 		<!--
 			Generate symbol package for Source Link
