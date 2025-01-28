@@ -1,6 +1,7 @@
 namespace RouteVersioning.Sunset;
 
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,11 +27,11 @@ internal class SunsetEndpointFilter : IEndpointFilter
 
 		httpCtx.Response.Headers["Sunset"] = sunset.At.ToString("r");
 
-		if (sunset.Link?.Invoke(httpCtx) is string sunsetLink)
+		if (sunset.Link?.Invoke(httpCtx) is Uri sunsetUri)
 		{
 			httpCtx.Response.Headers.Append("Link", sunset.LinkMediaType is null
-				? $@"<{sunsetLink}>; rel=""sunset"""
-				: $@"<{sunsetLink}>; rel=""sunset""; type=""{sunset.LinkMediaType}"""
+				? $@"<{sunsetUri}>; rel=""sunset"""
+				: $@"<{sunsetUri}>; rel=""sunset""; type=""{sunset.LinkMediaType}"""
 			);
 		}
 

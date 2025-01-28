@@ -31,7 +31,7 @@ public class Program
 		.Version(1, (v) => v
 			.Sunset(
 				at: DateTime.Now.AddMonths(-1),
-				link: "https://www.example.com",
+				link: new Uri("https://www.example.com"),
 				linkMediaType: "text/html"
 			)
 			.ConfigureOpenApiInfo((i) =>
@@ -43,7 +43,7 @@ public class Program
 		.Version(2, (v) => v
 			.Sunset(
 				at: DateTime.Now.AddMonths(1),
-				link: "https://www.example.com",
+				link: new Uri("https://www.example.com"),
 				linkMediaType: "text/html"
 			)
 		)

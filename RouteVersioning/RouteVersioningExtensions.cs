@@ -32,7 +32,7 @@ public static class RouteVersioningExtensions
 	{
 		return builder.Sunset(
 			at,
-			null as Func<HttpContext, string>,
+			null as Func<HttpContext, Uri>,
 			null
 		);
 	}
@@ -53,14 +53,14 @@ public static class RouteVersioningExtensions
 	public static RouteVersionMetadataBuilder<T> Sunset<T>(
 		this RouteVersionMetadataBuilder<T> builder,
 		DateTime at,
-		string? link = null,
+		Uri? link = null,
 		string? linkMediaType = null
 	)
 		where T : struct
 	{
 		return builder.Sunset(
 			at,
-			link is string linkString ? (ctx) => linkString : null,
+			link is Uri linkUri ? (ctx) => linkUri : null,
 			linkMediaType
 		);
 	}
@@ -81,7 +81,7 @@ public static class RouteVersioningExtensions
 	public static RouteVersionMetadataBuilder<T> Sunset<T>(
 		this RouteVersionMetadataBuilder<T> builder,
 		DateTime at,
-		Func<HttpContext, string>? link = null,
+		Func<HttpContext, Uri>? link = null,
 		string? linkMediaType = null
 	)
 		where T : struct

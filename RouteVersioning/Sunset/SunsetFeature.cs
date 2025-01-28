@@ -20,7 +20,7 @@ public class SunsetFeature
 	/// <summary>
 	/// Function that returns a URL to a resource that includes details about the API retirement.
 	/// </summary>
-	public Func<HttpContext, string>? Link { get; init; }
+	public Func<HttpContext, Uri>? Link { get; init; }
 
 	/// <summary>
 	/// The media type of the resource linked via <see cref="Link"/>.

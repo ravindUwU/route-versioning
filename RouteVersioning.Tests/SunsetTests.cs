@@ -13,7 +13,7 @@ public class SunsetTests
 	public async Task Includes_headers_in_marked_versions()
 	{
 		var sunsetDate = new DateTime(2025, 6, 7, 8, 9, 10);
-		var sunsetLink = $"https://www.example.com/{Guid.NewGuid()}";
+		var sunsetLink = new Uri($"https://www.example.com/{Guid.NewGuid()}");
 
 		var set = new RouteVersionSetBuilder<int>()
 			.Version(1, (v) => v.Sunset(sunsetDate))
@@ -75,7 +75,7 @@ public class SunsetTests
 	public async Task Correctly_formats_link_header()
 	{
 		var sunsetDate = new DateTime(2025, 6, 7, 8, 9, 10);
-		var sunsetLink = $"https://www.example.com/{Guid.NewGuid()}";
+		var sunsetLink = new Uri($"https://www.example.com/{Guid.NewGuid()}");
 		var sunsetMediaType = "text/html";
 
 		var set = new RouteVersionSetBuilder<int>()
