@@ -18,7 +18,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 	/// <summary>
 	/// Map endpoints available from the specified API version onward.
 	/// </summary>
-	public Builder From(T from)
+	public IEndpointRouteBuilder From(T from)
 	{
 		return MakeBuilder(from, to: null);
 	}
@@ -26,7 +26,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 	/// <summary>
 	/// Map endpoints available in all API versions between the specified inclusive range.
 	/// </summary>
-	public Builder Between(T from, T to)
+	public IEndpointRouteBuilder Between(T from, T to)
 	{
 		return MakeBuilder(from, to);
 	}
@@ -62,7 +62,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 
 	// A builder is made for an API version range, and collects data sources (introduced when routes
 	// are added) and conventions.
-	public class Builder(IEndpointRouteBuilder outer)
+	internal class Builder(IEndpointRouteBuilder outer)
 		: IEndpointRouteBuilder
 	{
 		internal readonly IEndpointRouteBuilder outer = outer;
