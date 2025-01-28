@@ -102,40 +102,40 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 
 			foreach (var version in set)
 			{
-				var meta = set.GetMetadata(version);
-
-				var versionedGroupCtx = new RouteGroupContext
-				{
-					Prefix = RoutePatternFactory.Combine(
-						groupCtx?.Prefix,
-						RoutePatternFactory.Parse(set.GetSlug(version))
-					),
-					ApplicationServices = builder.outer.ServiceProvider,
-					Conventions = [
-						// Add convention to add route version metadata to the endpoint.
-						(b) => b.Metadata.Add(meta),
-
-						// Group conventions.
-						.. groupCtx?.Conventions ?? [],
-
-						// Add version-specific conventions.
-						.. meta.conventions,
-					],
-					FinallyConventions = [
-						// Group conventions.
-						.. groupCtx?.FinallyConventions ?? [],
-
-						// Add version-specific conventions.
-						.. meta.finallyConventions,
-					],
-				};
-
 				var shouldMap =
 					set.Compare(version, from) >= 0
 					&& (to is null || set.Compare(version, to.Value) <= 0);
 
 				if (shouldMap)
 				{
+					var meta = set.GetMetadata(version);
+
+					var versionedGroupCtx = new RouteGroupContext
+					{
+						Prefix = RoutePatternFactory.Combine(
+							groupCtx?.Prefix,
+							RoutePatternFactory.Parse(set.GetSlug(version))
+						),
+						ApplicationServices = builder.outer.ServiceProvider,
+						Conventions = [
+							// Add convention to add route version metadata to the endpoint.
+							(b) => b.Metadata.Add(meta),
+
+							// Group conventions.
+							.. groupCtx?.Conventions ?? [],
+
+							// Add version-specific conventions.
+							.. meta.conventions,
+						],
+						FinallyConventions = [
+							// Group conventions.
+							.. groupCtx?.FinallyConventions ?? [],
+
+							// Add version-specific conventions.
+							.. meta.finallyConventions,
+						],
+					};
+
 					foreach (var ds in builder.dataSources)
 					{
 						list.AddRange(ds.GetGroupedEndpoints(versionedGroupCtx));
