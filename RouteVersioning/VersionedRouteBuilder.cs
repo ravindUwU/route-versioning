@@ -12,7 +12,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Allows mapping routes associated with the specified <see cref="RouteVersionSet{T}"/>.
 /// </summary>
-public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteVersionSet<T> set)
+public sealed class VersionedRouteBuilder<T>(IEndpointRouteBuilder outer, RouteVersionSet<T> set)
 	where T : struct
 {
 	/// <summary>
@@ -31,7 +31,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 		return MakeBuilder(from, to);
 	}
 
-	private Builder MakeBuilder(T from, T? to)
+	private InternalBuilder MakeBuilder(T from, T? to)
 	{
 		if (!set.Contains(from))
 		{
@@ -51,7 +51,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 			);
 		}
 
-		var builder = new Builder(outer);
+		var builder = new InternalBuilder(outer);
 		var ds = new DataSource(set, builder, from, to);
 		outer.DataSources.Add(ds);
 		return builder;
@@ -62,7 +62,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 
 	// A builder is made for an API version range, and collects data sources (introduced when routes
 	// are added) and conventions.
-	internal class Builder(IEndpointRouteBuilder outer)
+	internal class InternalBuilder(IEndpointRouteBuilder outer)
 		: IEndpointRouteBuilder
 	{
 		internal readonly IEndpointRouteBuilder outer = outer;
@@ -80,7 +80,7 @@ public sealed class VersionedRouteContext<T>(IEndpointRouteBuilder outer, RouteV
 	// The data source yields endpoints collected by the builder, across all applicable API versions.
 	internal class DataSource(
 		RouteVersionSet<T> set,
-		Builder builder,
+		InternalBuilder builder,
 		T from,
 		T? to
 	)

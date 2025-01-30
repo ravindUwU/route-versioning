@@ -7,14 +7,14 @@ using System;
 
 public static class RouteVersioningExtensions
 {
-	/// <inheritdoc cref="VersionedRouteContext{T}"/>
-	public static VersionedRouteContext<T> WithVersions<T>(
+	/// <inheritdoc cref="VersionedRouteBuilder{T}"/>
+	public static VersionedRouteBuilder<T> WithVersions<T>(
 		this IEndpointRouteBuilder routeBuilder,
 		RouteVersionSet<T> set
 	)
 		where T : struct
 	{
-		return new VersionedRouteContext<T>(routeBuilder, set);
+		return new VersionedRouteBuilder<T>(routeBuilder, set);
 	}
 
 	/// <summary>
